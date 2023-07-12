@@ -38,8 +38,6 @@ public class WeaponController : MonoBehaviour
         else
         {
             player.IsShooting = false;
-            // Hide the target indicator
-            target.GetComponent<EnemyController>().HideTargetIndicator();
         }
     }
 
@@ -60,12 +58,25 @@ public class WeaponController : MonoBehaviour
         }
 
         target = closestEnemy;
+
+        if (target == null)
+            return;
+
+        // Check if the target is within the targeting range
+        if (Vector3.Distance(transform.position, target.position) <= shootingRange)
+        {
+            // Display the target indicator
+            target.GetComponent<EnemyController>().ShowTargetIndicator();
+        }
+        else
+        {
+            // Hide the target indicator
+            target.GetComponent<EnemyController>().HideTargetIndicator();
+        }
     }
 
     private void Shoot()
     {
-        // Display the target indicator
-        target.GetComponent<EnemyController>().ShowTargetIndicator();
         // Check if enough time has passed to fire
         if (Time.time < nextFireTime)
             return;
