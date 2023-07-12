@@ -18,15 +18,6 @@ public class BaseController : MonoBehaviour
         animator = GetComponentInChildren<Animator>();
     }
 
-    protected virtual void FixedUpdate()
-    {
-        // Move the character or enemy
-        Move();
-
-        // Apply gravity
-        // ApplyGravity();
-    }
-
     protected virtual void Move()
     {
         // Calculate the movement velocity

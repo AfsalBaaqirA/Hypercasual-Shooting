@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
@@ -5,7 +6,7 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance { get; private set; }
 
     [SerializeField] private GameObject gameOverUI;
-    [SerializeField] private GameObject winUI;
+    [SerializeField] private TextMeshProUGUI gameOverText;
 
     private void Awake()
     {
@@ -17,11 +18,18 @@ public class UIManager : MonoBehaviour
 
     public void ShowGameOverUI()
     {
+        gameOverText.text = "You Lose!";
         gameOverUI.SetActive(true);
     }
 
     public void ShowWinUI()
     {
-        winUI.SetActive(true);
+        gameOverText.text = "You Win!";
+        gameOverUI.SetActive(true);
+    }
+
+    public void HideGameOverUI()
+    {
+        gameOverUI.SetActive(false);
     }
 }
