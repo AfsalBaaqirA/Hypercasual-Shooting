@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4006483377665059589}
   - component: {fileID: 1118589486798402636}
   - component: {fileID: 5395501139074630249}
+  - component: {fileID: 3519171660501719945}
   m_Layer: 10
   m_Name: Octagon
   m_TagString: Untagged
@@ -83,3 +84,24 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &3519171660501719945
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3379873617176140761}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 9, y: 43.7242, z: 8.999999}
+  m_Center: {x: 0.0000030994415, y: -21.562098, z: 0.0000042915344}
