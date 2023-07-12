@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 240741849433650250}
   - component: {fileID: 943823678106630427}
   - component: {fileID: 4720013483892086111}
-  - component: {fileID: 2094862970055838979}
+  - component: {fileID: 2925770226095416614}
   m_Layer: 10
   m_Name: Longcircle
   m_TagString: Untagged
@@ -84,8 +84,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &2094862970055838979
-BoxCollider:
+--- !u!64 &2925770226095416614
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -102,6 +102,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 23.888504, y: 43.724155, z: 13.800712}
-  m_Center: {x: 5.043897, y: -21.562075, z: -0.0000038146973}
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -6569177998929528264, guid: b48aba8b5f03e480ea6d071d0434db8d, type: 3}
