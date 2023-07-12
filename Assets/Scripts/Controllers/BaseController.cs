@@ -6,11 +6,19 @@ public class BaseController : MonoBehaviour
     [SerializeField] protected float rotationSpeed = 10f;
     [SerializeField] protected float gravityMultiplier = 1f;
 
+
     protected Rigidbody rb;
     protected Vector3 movementDirection;
     protected Animator animator;
     private float gravity = -9.81f;
     private float gravityVelocity = 0f;
+    private bool isShooting = false;
+
+    public bool IsShooting
+    {
+        get { return isShooting; }
+        set { isShooting = value; }
+    }
 
     protected virtual void Awake()
     {
@@ -29,8 +37,11 @@ public class BaseController : MonoBehaviour
         // Handle the animation
         HandleAnimation();
 
-        // Handle the rotation
-        HandleRotationInput();
+        if (!isShooting)
+        {
+            // Handle the rotation
+            HandleRotationInput();
+        }
     }
 
     private void HandleAnimation()

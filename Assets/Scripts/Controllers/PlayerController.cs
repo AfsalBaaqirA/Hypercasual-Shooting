@@ -5,7 +5,7 @@ public class PlayerController : BaseController
     [SerializeField] private WeaponController weaponController;
 
     private Transform target;
-    private GameInput gameInput;
+    private InputManager gameInput;
     private GameObject[] enemies;
 
     protected override void Awake()
@@ -15,7 +15,7 @@ public class PlayerController : BaseController
 
     private void Start()
     {
-        gameInput = GameInput.Instance;
+        gameInput = InputManager.Instance;
     }
 
     private void Update()
@@ -26,8 +26,19 @@ public class PlayerController : BaseController
 
     private void FixedUpdate()
     {
-        // Move the player
-        Move();
+        // Check if the game is started or over
+        if (GameManager.Instance.GameState == GameState.Started)
+        {
+            // Check if the player has fallen off the map
+            if (transform.position.y < -10)
+            {
+                GameManager.Instance.GameOver();
+            }
+            else
+            {
+                Move();
+            }
+        }
     }
 
     private void HandleMovementInput(Vector2 movementInput)

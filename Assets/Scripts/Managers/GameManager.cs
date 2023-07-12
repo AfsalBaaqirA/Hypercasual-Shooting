@@ -5,8 +5,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    private bool isGameOver = false;
-    private bool isGameWon = false;
+    public GameState GameState { get; private set; }
 
     private void Awake()
     {
@@ -22,21 +21,9 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.HideGameOverUI();
     }
 
-    private void Update()
-    {
-        if (isGameOver || isGameWon)
-        {
-            // Check for input to reset the scene
-            if (Input.GetMouseButtonDown(0))
-            {
-                ResetScene();
-            }
-        }
-    }
-
     public void GameOver()
     {
-        isGameOver = true;
+        GameState = GameState.Over;
 
         // Display game over UI
         UIManager.Instance.ShowGameOverUI();
@@ -46,7 +33,7 @@ public class GameManager : MonoBehaviour
 
     public void GameWon()
     {
-        isGameWon = true;
+        GameState = GameState.Won;
 
         // Display win UI
         UIManager.Instance.ShowWinUI();
@@ -54,9 +41,16 @@ public class GameManager : MonoBehaviour
         Debug.Log("You Win!");
     }
 
-    private void ResetScene()
+    public void ResetScene()
     {
         // Reset the scene
         SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
     }
+}
+
+public enum GameState
+{
+    Started,
+    Over,
+    Won
 }
