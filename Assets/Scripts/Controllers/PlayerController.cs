@@ -5,7 +5,7 @@ public class PlayerController : BaseController
     [SerializeField] private WeaponController weaponController;
 
     private Transform target;
-    private GameInput gameInput;
+    private InputManager gameInput;
     private GameObject[] enemies;
 
     protected override void Awake()
@@ -15,7 +15,7 @@ public class PlayerController : BaseController
 
     private void Start()
     {
-        gameInput = GameInput.Instance;
+        gameInput = InputManager.Instance;
     }
 
     private void Update()

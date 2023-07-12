@@ -1,10 +1,13 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class WeaponController : MonoBehaviour
 {
     [SerializeField] private List<GameObject> weapons;
     [SerializeField] private PlayerController player;
+    [SerializeField] private Transform firePoint;
+    [SerializeField] private float bulletSpeed = 100f;
 
     private Weapon currentWeapon;
 
@@ -43,7 +46,7 @@ public class WeaponController : MonoBehaviour
 
     private void FindNearestEnemy()
     {
-        enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        enemies = GameObject.FindGameObjectsWithTag("Enemy")?.Where(x => x.activeSelf).ToArray();
         float closestDistance = Mathf.Infinity;
         Transform closestEnemy = null;
 
@@ -55,6 +58,12 @@ public class WeaponController : MonoBehaviour
                 closestDistance = distance;
                 closestEnemy = enemy.transform;
             }
+        }
+
+        if (target != null && target != closestEnemy)
+        {
+            // Hide the target indicator of the previous target
+            target.GetComponent<EnemyController>().HideTargetIndicator();
         }
 
         target = closestEnemy;
@@ -81,8 +90,32 @@ public class WeaponController : MonoBehaviour
         if (Time.time < nextFireTime)
             return;
         player.IsShooting = true;
-        // Perform the shooting logic
-        target.GetComponent<EnemyController>().TakeDamage(damage);
+        // Perform shooting-related actions (e.g., play shooting animation, spawn particles, etc.)
+        GameObject bulletObject = null;
+        switch (weaponName)
+        {
+            case "Pistol":
+                bulletObject = ObjectPooler.Instance.GetBulletObjectFromPool();
+                break;
+            case "Shotgun":
+                bulletObject = ObjectPooler.Instance.GetBulletObjectFromPool();
+                break;
+            case "Machinegun":
+                bulletObject = ObjectPooler.Instance.GetBulletObjectFromPool();
+                break;
+            case "Launcher":
+                bulletObject = ObjectPooler.Instance.GetMissileObjectFromPool();
+                break;
+            default:
+                break;
+        }
+
+        bulletObject.transform.position = firePoint.position;
+        bulletObject.transform.rotation = firePoint.rotation;
+        bulletObject.GetComponent<Projectile>().DamageAmount = damage;
+        bulletObject.SetActive(true);
+        bulletObject.GetComponent<Rigidbody>().velocity = bulletObject.transform.forward * bulletSpeed;
+
         // Update the next fire time
         nextFireTime = Time.time + fireRate;
 

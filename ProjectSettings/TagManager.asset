@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - FxTemporaire
+  - Projectile
+  - FinishArea
+  - Obstacle
   layers:
   - Default
   - TransparentFX

@@ -1,11 +1,11 @@
 using UnityEngine;
 // using UniversalMobileController;
 
-public class GameInput : MonoBehaviour
+public class InputManager : MonoBehaviour
 {
     [SerializeField] private FloatingJoystick floatingJoyStick;
 
-    public static GameInput Instance
+    public static InputManager Instance
     { get; private set; }
 
     private PlayerInputActions playerInputActions;

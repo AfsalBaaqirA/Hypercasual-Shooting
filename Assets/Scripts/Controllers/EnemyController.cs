@@ -53,9 +53,9 @@ public class EnemyController : BaseController
     private void Die()
     {
         // Perform death-related actions (e.g., play death animation, spawn particles, etc.)
-
-        // Destroy the enemy object
-        Destroy(gameObject);
+        Debug.Log("Enemy died");
+        // Set back to pool
+        gameObject.SetActive(false);
     }
 
     public void ShowTargetIndicator()
@@ -72,5 +72,11 @@ public class EnemyController : BaseController
         // Hide the target indicator
         targetIndicator.SetActive(false);
         // healthBar.SetActive(false);
+    }
+
+    public void Reset()
+    {
+        currentHealth = maxHealth;
+
     }
 }

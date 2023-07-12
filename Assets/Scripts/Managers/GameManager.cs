@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("You Win!");
     }
 
-    private void ResetScene()
+    public void ResetScene()
     {
         // Reset the scene
         SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
