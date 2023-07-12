@@ -15,6 +15,6 @@ MonoBehaviour:
   weaponName: Pistol
   fireRate: 0.3
   damage: 15
-  shootingRange: 15
+  shootingRange: 10
   projectilePrefab: {fileID: 3502875955341559737, guid: e893d7aded9904b2fac62f3139861807,
     type: 3}

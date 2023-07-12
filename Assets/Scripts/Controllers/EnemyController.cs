@@ -25,24 +25,18 @@ public class EnemyController : BaseController
         if (Vector3.Distance(transform.position, player.position) < detectionRange)
         {
             // Move towards the player
-            Move();
+            this.movementDirection = (player.position - transform.position).normalized;
         }
     }
 
-    protected override void Move()
-    {
-        // Move towards the player
-        this.movementDirection = (player.position - transform.position).normalized;
-        Debug.Log(movementDirection);
-    }
 
-    private void MoveTowardsPlayer()
+    private void FixedUpdate()
     {
-        // Calculate the direction to the player
-        Vector3 direction = (player.position - transform.position).normalized;
-
-        // Move the enemy towards the player
-        transform.Translate(direction * movementSpeed * Time.deltaTime);
+        // Check if the game is started or over
+        if (GameManager.Instance.GameState == GameState.Started)
+        {
+            Move();
+        }
     }
 
     public void TakeDamage(int damage)
@@ -66,15 +60,17 @@ public class EnemyController : BaseController
 
     public void ShowTargetIndicator()
     {
+        Debug.Log("Show target indicator");
         // Show the target indicator
         targetIndicator.SetActive(true);
-        healthBar.SetActive(true);
+        // healthBar.SetActive(true);
     }
 
     public void HideTargetIndicator()
     {
+        Debug.Log("Hide target indicator");
         // Hide the target indicator
         targetIndicator.SetActive(false);
-        healthBar.SetActive(false);
+        // healthBar.SetActive(false);
     }
 }

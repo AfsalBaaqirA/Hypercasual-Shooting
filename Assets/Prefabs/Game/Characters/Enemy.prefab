@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4837539564655577151}
-  - component: {fileID: 2137489351695066232}
   - component: {fileID: 2749551403636123914}
+  - component: {fileID: 2137489351695066232}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -35,25 +35,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2137489351695066232
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1172102263697165845}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7df0b55c0192e2b4f88864faf4df03fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  movementSpeed: 5
-  rotationSpeed: 10
-  gravityMultiplier: 1
-  detectionRange: 5
-  maxHealth: 100
-  healthBar: {fileID: 0}
-  targetIndicator: {fileID: 5864791379658455839}
 --- !u!65 &2749551403636123914
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -69,12 +50,31 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 0.5, y: 1, z: 0.5}
   m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!114 &2137489351695066232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1172102263697165845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7df0b55c0192e2b4f88864faf4df03fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementSpeed: 3
+  rotationSpeed: 10
+  gravityMultiplier: 1
+  detectionRange: 5
+  maxHealth: 100
+  healthBar: {fileID: 0}
+  targetIndicator: {fileID: 5864791379658455839}
 --- !u!1 &5864791379658455839
 GameObject:
   m_ObjectHideFlags: 0
@@ -197,6 +197,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Circle
+      objectReference: {fileID: 0}
+    - target: {fileID: 6508624049441398505, guid: d9d7d6d1f51ac408abd9728b9544feec,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9113769897865883325, guid: d9d7d6d1f51ac408abd9728b9544feec,
         type: 3}

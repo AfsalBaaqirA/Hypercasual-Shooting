@@ -4,6 +4,7 @@ using UnityEngine;
 public class WeaponController : MonoBehaviour
 {
     [SerializeField] private List<GameObject> weapons;
+    [SerializeField] private PlayerController player;
 
     private Weapon currentWeapon;
 
@@ -17,29 +18,34 @@ public class WeaponController : MonoBehaviour
 
     private void Start()
     {
-        // Find all enemies in the scene
-        enemies = GameObject.FindGameObjectsWithTag("Enemy");
-
         HideAllWeapons();
     }
 
     private void Update()
     {
-        if (target == null || currentWeapon == null)
+        if (currentWeapon == null)
             return;
 
         // Find the nearest enemy within the targeting range
         FindNearestEnemy();
 
         // Check if a target is found and if enough time has passed to fire
-        if (target != null && Time.time >= nextFireTime)
+
+        if (target != null && Vector3.Distance(transform.position, target.position) <= shootingRange)
         {
             Shoot();
+        }
+        else
+        {
+            player.IsShooting = false;
+            // Hide the target indicator
+            target.GetComponent<EnemyController>().HideTargetIndicator();
         }
     }
 
     private void FindNearestEnemy()
     {
+        enemies = GameObject.FindGameObjectsWithTag("Enemy");
         float closestDistance = Mathf.Infinity;
         Transform closestEnemy = null;
 
@@ -54,28 +60,25 @@ public class WeaponController : MonoBehaviour
         }
 
         target = closestEnemy;
-
-        // Check if the closest enemy is within the targeting range
-        if (closestDistance <= shootingRange)
-        {
-            // Show the target indicator
-            target.GetComponent<EnemyController>().ShowTargetIndicator();
-        }
-        else
-        {
-            // Hide the target indicator
-            target.GetComponent<EnemyController>().HideTargetIndicator();
-        }
     }
 
     private void Shoot()
     {
+        // Display the target indicator
+        target.GetComponent<EnemyController>().ShowTargetIndicator();
+        // Check if enough time has passed to fire
+        if (Time.time < nextFireTime)
+            return;
+        player.IsShooting = true;
         // Perform the shooting logic
         target.GetComponent<EnemyController>().TakeDamage(damage);
-        // Set any additional properties or behaviors for the bullet
-        Debug.Log("Shooting at " + target.name);
         // Update the next fire time
         nextFireTime = Time.time + fireRate;
+
+        // Smoothly rotate towards the target
+        Vector3 direction = (target.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10f);
     }
 
     public void EquipWeapon(Weapon weapon)
