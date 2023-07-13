@@ -21,6 +21,9 @@ public class EnemyController : BaseController
 
     private void Update()
     {
+        if (GameManager.Instance.GameState != GameState.Started)
+            return;
+
         // Check if player is within detection range
         if (Vector3.Distance(transform.position, player.position) < detectionRange)
         {

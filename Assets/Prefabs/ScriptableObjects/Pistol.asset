@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Pistol
   m_EditorClassIdentifier: 
   weaponName: Pistol
-  fireRate: 0.3
+  fireRate: 0.4
   damage: 15
-  shootingRange: 10
-  projectilePrefab: {fileID: 3502875955341559737, guid: e893d7aded9904b2fac62f3139861807,
-    type: 3}
+  shootingRange: 15
+  fireSound: {fileID: 8300000, guid: d1c5916a97315374db8df0cdfa527463, type: 3}
+  weaponFireType: 1

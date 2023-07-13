@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Shotgun
   fireRate: 1
-  damage: 20
+  damage: 35
   shootingRange: 10
-  projectilePrefab: {fileID: 3502875955341559737, guid: e893d7aded9904b2fac62f3139861807,
-    type: 3}
+  fireSound: {fileID: 8300000, guid: d5373be0a25170f44afc5cb7ac45bc76, type: 3}
+  weaponFireType: 1

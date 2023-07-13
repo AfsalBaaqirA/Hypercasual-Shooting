@@ -15,6 +15,6 @@ MonoBehaviour:
   weaponName: Launcher
   fireRate: 1.5
   damage: 50
-  shootingRange: 30
-  projectilePrefab: {fileID: 3127963368721969029, guid: 62e19de2bedac464580471100ace0f8d,
-    type: 3}
+  shootingRange: 10
+  fireSound: {fileID: 8300000, guid: 2102d0b2b2635dc4bb5597e08ed2a201, type: 3}
+  weaponFireType: 0

@@ -26,7 +26,7 @@ public class WeaponController : MonoBehaviour
 
     private void Update()
     {
-        if (currentWeapon == null)
+        if (currentWeapon == null || GameManager.Instance.GameState != GameState.Started)
             return;
 
         // Find the nearest enemy within the targeting range
@@ -115,7 +115,7 @@ public class WeaponController : MonoBehaviour
         bulletObject.GetComponent<Projectile>().DamageAmount = damage;
         bulletObject.SetActive(true);
         bulletObject.GetComponent<Rigidbody>().velocity = bulletObject.transform.forward * bulletSpeed;
-
+        AudioManager.Instance.PlaySoundEffect(currentWeapon.FireSound);
         // Update the next fire time
         nextFireTime = Time.time + fireRate;
 
@@ -154,7 +154,7 @@ public class WeaponController : MonoBehaviour
             }
         }
 
-        Debug.Log("Equipped " + currentWeapon.WeaponName);
+        GameManager.Instance.WeaponName = weaponName;
     }
 
     public void HideAllWeapons()

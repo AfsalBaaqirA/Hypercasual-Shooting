@@ -16,5 +16,5 @@ MonoBehaviour:
   fireRate: 0.2
   damage: 10
   shootingRange: 20
-  projectilePrefab: {fileID: 3502875955341559737, guid: e893d7aded9904b2fac62f3139861807,
-    type: 3}
+  fireSound: {fileID: 8300000, guid: 68a8201f51ef61c468510ca13e3cfff0, type: 3}
+  weaponFireType: 1

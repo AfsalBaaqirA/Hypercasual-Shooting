@@ -5,7 +5,33 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    [SerializeField] private AudioClip musicClip;
+
     public GameState GameState { get; private set; }
+    public GameSettings gameSettings { get; internal set; }
+
+    private int playerCoins = 0;
+    private string weaponName = "No Weapon";
+
+    public int PlayerCoins
+    {
+        get { return playerCoins; }
+        set
+        {
+            playerCoins = value;
+            UIManager.Instance.UpdateCoinsUI(playerCoins);
+        }
+    }
+
+    public string WeaponName
+    {
+        get { return weaponName; }
+        set
+        {
+            weaponName = value;
+            UIManager.Instance.UpdateWeaponNameUI(weaponName);
+        }
+    }
 
     private void Awake()
     {
@@ -17,8 +43,10 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        // Hide the game over UI
-        UIManager.Instance.HideGameOverUI();
+        gameSettings = new GameSettings();
+        gameSettings.isMusicOn = ClientPrefs.GetMusicToggle();
+        gameSettings.isSoundOn = ClientPrefs.GetSoundEffectsToggle();
+        AudioManager.Instance.PlayMusic(musicClip);
     }
 
     public void GameOver()
@@ -27,8 +55,6 @@ public class GameManager : MonoBehaviour
 
         // Display game over UI
         UIManager.Instance.ShowGameOverUI();
-
-        Debug.Log("Game Over!");
     }
 
     public void GameWon()
@@ -37,11 +63,9 @@ public class GameManager : MonoBehaviour
 
         // Display win UI
         UIManager.Instance.ShowWinUI();
-
-        Debug.Log("You Win!");
     }
 
-    public void ResetScene()
+    public void RestartGame()
     {
         // Reset the scene
         SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
@@ -53,4 +77,10 @@ public enum GameState
     Started,
     Over,
     Won
+}
+
+public class GameSettings
+{
+    public bool isMusicOn;
+    public bool isSoundOn;
 }

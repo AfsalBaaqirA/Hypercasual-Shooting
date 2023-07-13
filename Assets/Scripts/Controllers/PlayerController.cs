@@ -20,24 +20,27 @@ public class PlayerController : BaseController
 
     private void Update()
     {
+        // Check if the game is started or over
+        if (GameManager.Instance.GameState != GameState.Started)
+            return;
+
         // Handle movement input
         HandleMovementInput(gameInput.GetMovementInputNormalized());
     }
 
     private void FixedUpdate()
     {
-        // Check if the game is started or over
-        if (GameManager.Instance.GameState == GameState.Started)
+        if (GameManager.Instance.GameState != GameState.Started)
+            return;
+
+        // Check if the player has fallen off the map
+        if (transform.position.y < -10)
         {
-            // Check if the player has fallen off the map
-            if (transform.position.y < -10)
-            {
-                GameManager.Instance.GameOver();
-            }
-            else
-            {
-                Move();
-            }
+            GameManager.Instance.GameOver();
+        }
+        else
+        {
+            Move();
         }
     }
 
