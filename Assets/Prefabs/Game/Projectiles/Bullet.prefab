@@ -204,7 +204,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -221,7 +221,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82dad96649d5e6d42b1979d0cac0c7f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitEffectPrefab: {fileID: 2867987884653548720, guid: feeb946dcc457423fbfb7a74bfba3d36,
+  hitEffectPrefab: {fileID: 2472297588110319616, guid: c99c3cc5de17a472eb05823b2c837259,
     type: 3}
   hitObstacleEffectPrefab: {fileID: 2875340056302655856, guid: dcba257d6180743ba8c583a3268edf5e,
     type: 3}

@@ -1,7 +1,7 @@
 using UnityEngine;
 using static Weapon;
 
-public class Projectile : MonoBehaviour
+public class ProjectileController : MonoBehaviour
 {
     [SerializeField] private GameObject hitEffectPrefab;
     [SerializeField] private GameObject hitObstacleEffectPrefab;
@@ -21,7 +21,7 @@ public class Projectile : MonoBehaviour
 
     private void DisableProjectile()
     {
-        gameObject.SetActive(false);
+        ObjectPooler.Instance.ReturnObjectToPool(gameObject);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -47,9 +47,7 @@ public class Projectile : MonoBehaviour
 
             // Instantiate the hit effect
             Instantiate(hitEffectPrefab, transform.position, Quaternion.identity);
-
-            // Disable the bullet
-            gameObject.SetActive(false);
+            DisableProjectile();
         }
         else if (other.gameObject.CompareTag("Obstacle"))
         {
@@ -57,8 +55,7 @@ public class Projectile : MonoBehaviour
             // Instantiate the hit effect
             Instantiate(hitObstacleEffectPrefab, transform.position, Quaternion.identity);
 
-            // Disable the bullet
-            gameObject.SetActive(false);
+            DisableProjectile();
         }
     }
 }

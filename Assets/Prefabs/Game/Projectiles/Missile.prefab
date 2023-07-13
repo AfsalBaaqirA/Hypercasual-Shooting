@@ -159,9 +159,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82dad96649d5e6d42b1979d0cac0c7f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitEffectPrefab: {fileID: 5127867573104205399, guid: d37d5e17ad5244422940abd9a563c75b,
+  hitEffectPrefab: {fileID: 2875340056302655856, guid: dcba257d6180743ba8c583a3268edf5e,
     type: 3}
-  hitObstacleEffectPrefab: {fileID: 2875340056302655856, guid: dcba257d6180743ba8c583a3268edf5e,
+  hitObstacleEffectPrefab: {fileID: 5127867573104205399, guid: d37d5e17ad5244422940abd9a563c75b,
     type: 3}
 --- !u!65 &5321288435513524775
 BoxCollider:
