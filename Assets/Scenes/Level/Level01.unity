@@ -2681,10 +2681,10 @@ MonoBehaviour:
   enemyPrefab: {fileID: 1172102263697165845, guid: dfd1f306f82b944828f7a995c92080af,
     type: 3}
   spawnPoints:
-  - {fileID: 991116180}
-  - {fileID: 1428818538}
-  - {fileID: 279445064}
   - {fileID: 959005434}
+  - {fileID: 279445064}
+  - {fileID: 1428818538}
+  - {fileID: 991116180}
   objectCount: 10
 --- !u!1 &1024906586
 GameObject:
