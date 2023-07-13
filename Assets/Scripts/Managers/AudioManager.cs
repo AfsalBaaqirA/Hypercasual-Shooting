@@ -48,9 +48,12 @@ public class AudioManager : MonoBehaviour
         soundEffectsPlayer = gameObject.AddComponent<AudioSource>();
 
         // Set audio mixer
-        musicPlayer.outputAudioMixerGroup = audioMixer.FindMatchingGroups("Music")[0];
-        soundEffectsPlayer.outputAudioMixerGroup = audioMixer.FindMatchingGroups("SoundEffects")[0];
+        musicPlayer.outputAudioMixerGroup = musicMixerGroup;
+        soundEffectsPlayer.outputAudioMixerGroup = soundEffectsMixerGroup;
+    }
 
+    private void Start()
+    {
         // Load player preferences
         LoadPlayerPreferences();
     }
@@ -58,13 +61,14 @@ public class AudioManager : MonoBehaviour
     // Load player preferences
     private void LoadPlayerPreferences()
     {
-        GameSettings gameSettings = GameManager.Instance.gameSettings;
 
+        Debug.Log(ClientPrefs.GetMusicToggle());
+        Debug.Log(ClientPrefs.GetSoundEffectsToggle());
         // Set music toggle
-        ToggleMusicMute(!gameSettings.isMusicOn);
+        ToggleMusicMute(ClientPrefs.GetMusicToggle());
 
         // Set sound effects toggle
-        ToggleSoundEffectsMute(!gameSettings.isSoundOn);
+        ToggleSoundEffectsMute(ClientPrefs.GetSoundEffectsToggle());
 
         // Set music volume
         SetMusicVolume(DEFAULT_MUSIC_VOLUME);

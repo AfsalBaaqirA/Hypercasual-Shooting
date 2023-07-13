@@ -19,7 +19,8 @@ public class Weapon : ScriptableObject
 
     public enum WeaponType
     {
-        AreaOfEffect,
-        SingleTarget
+        Single,
+        Spread,
+        Burst
     }
 }

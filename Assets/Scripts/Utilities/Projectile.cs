@@ -1,11 +1,13 @@
 using UnityEngine;
+using static Weapon;
 
 public class Projectile : MonoBehaviour
 {
     [SerializeField] private GameObject hitEffectPrefab;
     [SerializeField] private GameObject hitObstacleEffectPrefab;
-    private int damageAmount;
-    public int DamageAmount { set { damageAmount = value; } }
+
+    private Weapon weapon;
+    public Weapon Weapon { get => weapon; set => weapon = value; }
 
     private void OnEnable()
     {
@@ -24,12 +26,24 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Projectile collided with " + other.gameObject.name);
         if (other.gameObject.CompareTag("Enemy"))
         {
-            // Deal damage to the player
-            EnemyController playerHealth = other.gameObject.GetComponent<EnemyController>();
-            playerHealth?.TakeDamage(damageAmount);
+            Debug.Log("Hit enemy");
+            switch (weapon.WeaponFireType)
+            {
+                case WeaponType.Single:
+                    other.gameObject.GetComponent<EnemyController>().TakeDamage(weapon.Damage);
+                    break;
+                case WeaponType.Spread:
+                    // Get near enemies
+                    Collider[] colliders = Physics.OverlapSphere(transform.position, 2f);
+                    foreach (Collider collider in colliders)
+                    {
+                        EnemyController enemy = collider.gameObject.GetComponent<EnemyController>();
+                        enemy?.TakeDamage(weapon.Damage);
+                    }
+                    break;
+            }
 
             // Instantiate the hit effect
             Instantiate(hitEffectPrefab, transform.position, Quaternion.identity);
@@ -39,6 +53,7 @@ public class Projectile : MonoBehaviour
         }
         else if (other.gameObject.CompareTag("Obstacle"))
         {
+            Debug.Log("Hit obstacle");
             // Instantiate the hit effect
             Instantiate(hitObstacleEffectPrefab, transform.position, Quaternion.identity);
 

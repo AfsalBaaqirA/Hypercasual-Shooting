@@ -8,10 +8,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AudioClip musicClip;
 
     public GameState GameState { get; private set; }
-    public GameSettings gameSettings { get; internal set; }
 
-    private int playerCoins = 0;
-    private string weaponName = "No Weapon";
+    private int playerCoins;
+    private string weaponName;
 
     public int PlayerCoins
     {
@@ -39,13 +38,15 @@ public class GameManager : MonoBehaviour
             Instance = this;
         else
             Destroy(gameObject);
+
+        // Set default values
+        PlayerCoins = 0;
+        WeaponName = "No Weapon";
     }
 
     private void Start()
     {
-        gameSettings = new GameSettings();
-        gameSettings.isMusicOn = ClientPrefs.GetMusicToggle();
-        gameSettings.isSoundOn = ClientPrefs.GetSoundEffectsToggle();
+        GameState = GameState.Started;
         AudioManager.Instance.PlayMusic(musicClip);
     }
 
@@ -77,10 +78,4 @@ public enum GameState
     Started,
     Over,
     Won
-}
-
-public class GameSettings
-{
-    public bool isMusicOn;
-    public bool isSoundOn;
 }

@@ -7,7 +7,8 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private List<GameObject> weapons;
     [SerializeField] private PlayerController player;
     [SerializeField] private Transform firePoint;
-    [SerializeField] private float bulletSpeed = 100f;
+    [SerializeField] private float bulletForce = 20f;
+    [SerializeField] private ParticleSystem muzzleFlash;
 
     private Weapon currentWeapon;
 
@@ -37,10 +38,6 @@ public class WeaponController : MonoBehaviour
         if (target != null && Vector3.Distance(transform.position, target.position) <= shootingRange)
         {
             Shoot();
-        }
-        else
-        {
-            player.IsShooting = false;
         }
     }
 
@@ -75,11 +72,18 @@ public class WeaponController : MonoBehaviour
         if (Vector3.Distance(transform.position, target.position) <= shootingRange)
         {
             // Display the target indicator
+            player.Target = target;
             target.GetComponent<EnemyController>().ShowTargetIndicator();
+
+            // Rotate towards the target
+            Vector3 direction = (target.position - transform.position).normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
         }
         else
         {
             // Hide the target indicator
+            player.Target = null;
             target.GetComponent<EnemyController>().HideTargetIndicator();
         }
     }
@@ -89,17 +93,12 @@ public class WeaponController : MonoBehaviour
         // Check if enough time has passed to fire
         if (Time.time < nextFireTime)
             return;
-        player.IsShooting = true;
         // Perform shooting-related actions (e.g., play shooting animation, spawn particles, etc.)
         GameObject bulletObject = null;
         switch (weaponName)
         {
             case "Pistol":
-                bulletObject = ObjectPooler.Instance.GetBulletObjectFromPool();
-                break;
             case "Shotgun":
-                bulletObject = ObjectPooler.Instance.GetBulletObjectFromPool();
-                break;
             case "Machinegun":
                 bulletObject = ObjectPooler.Instance.GetBulletObjectFromPool();
                 break;
@@ -111,18 +110,24 @@ public class WeaponController : MonoBehaviour
         }
 
         bulletObject.transform.position = firePoint.position;
-        bulletObject.transform.rotation = firePoint.rotation;
-        bulletObject.GetComponent<Projectile>().DamageAmount = damage;
+        // Calculate the direction towards the player's aim
+        Vector3 direction = (target.position - firePoint.position).normalized;
+
+        // Rotate the bullet towards the player's aim
+        Quaternion rotation = Quaternion.LookRotation(direction);
+        bulletObject.transform.rotation = rotation;
+
+        bulletObject.GetComponent<Projectile>().Weapon = currentWeapon;
         bulletObject.SetActive(true);
-        bulletObject.GetComponent<Rigidbody>().velocity = bulletObject.transform.forward * bulletSpeed;
+        Rigidbody bulletRigidbody = bulletObject.GetComponent<Rigidbody>();
+        if (bulletRigidbody != null)
+        {
+            // Apply force to the bullet in the forward direction
+            bulletRigidbody.AddForce(firePoint.transform.forward * bulletForce, ForceMode.Impulse);
+        }
         AudioManager.Instance.PlaySoundEffect(currentWeapon.FireSound);
         // Update the next fire time
         nextFireTime = Time.time + fireRate;
-
-        // Smoothly rotate towards the target
-        Vector3 direction = (target.position - transform.position).normalized;
-        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10f);
     }
 
     public void EquipWeapon(Weapon weapon)
@@ -144,14 +149,7 @@ public class WeaponController : MonoBehaviour
 
         foreach (GameObject wp in weapons)
         {
-            if (wp.name == weaponName)
-            {
-                wp.SetActive(true);
-            }
-            else
-            {
-                wp.SetActive(false);
-            }
+            wp.SetActive(wp.name == weaponName);
         }
 
         GameManager.Instance.WeaponName = weaponName;

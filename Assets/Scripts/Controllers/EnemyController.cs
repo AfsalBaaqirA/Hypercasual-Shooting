@@ -58,7 +58,7 @@ public class EnemyController : BaseController
         // Perform death-related actions (e.g., play death animation, spawn particles, etc.)
         Debug.Log("Enemy died");
         // Set back to pool
-        gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 
     public void ShowTargetIndicator()

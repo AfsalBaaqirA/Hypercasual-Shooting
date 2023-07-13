@@ -17,4 +17,4 @@ MonoBehaviour:
   damage: 10
   shootingRange: 20
   fireSound: {fileID: 8300000, guid: 68a8201f51ef61c468510ca13e3cfff0, type: 3}
-  weaponFireType: 1
+  weaponFireType: 0

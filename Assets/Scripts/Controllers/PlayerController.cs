@@ -4,7 +4,6 @@ public class PlayerController : BaseController
 {
     [SerializeField] private WeaponController weaponController;
 
-    private Transform target;
     private InputManager gameInput;
     private GameObject[] enemies;
 
