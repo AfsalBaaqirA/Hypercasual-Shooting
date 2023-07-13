@@ -69,10 +69,7 @@ public class GameManager : MonoBehaviour
 
     public void QuitGame()
     {
-        if (Application.isEditor)
-            UnityEditor.EditorApplication.isPlaying = false;
-        else
-            Application.Quit();
+        Application.Quit();
     }
 
     public void PauseGame()
