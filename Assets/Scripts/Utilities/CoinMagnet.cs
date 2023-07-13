@@ -33,6 +33,7 @@ public class CoinMagnet : MonoBehaviour
 
     private void CollectCoin()
     {
+        Debug.Log("Coin collected!");
         player.GetComponent<PlayerController>().CollectCoin();
 
         // Deactivate the coin and return it to the object pool

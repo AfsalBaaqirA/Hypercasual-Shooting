@@ -111,6 +111,9 @@ public class WeaponController : MonoBehaviour
         Vector3 direction = (target.position - firePoint.position).normalized;
         Quaternion rotation = Quaternion.LookRotation(direction);
         bulletObject.transform.rotation = rotation;
+        Debug.DrawRay(firePoint.position, direction * 100f, Color.red, 2f);
+
+        Debug.Log("Bullet" + bulletObject.name + " - " + bulletObject.GetComponent<ProjectileController>().Weapon);
         bulletObject.GetComponent<ProjectileController>().Weapon = currentWeapon;
         bulletObject.SetActive(true);
 

@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private GameObject gameOverUI;
     [SerializeField] private GameObject hudUI;
+    [SerializeField] private GameObject gamePausedUI;
     [SerializeField] private TextMeshProUGUI gameOverText;
     [SerializeField] private TextMeshProUGUI coinsText;
     [SerializeField] private TextMeshProUGUI weaponNameText;
@@ -27,7 +28,7 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        HideUI(gameOverUI);
+        ShowUI(hudUI);
         coinsText.text = GameManager.Instance.PlayerCoins.ToString();
         weaponNameText.text = GameManager.Instance.WeaponName;
     }
@@ -37,7 +38,7 @@ public class UIManager : MonoBehaviour
         HideUI(hudUI);
         gameOverText.text = "You Lose!";
         gameOverCoinsText.text = GameManager.Instance.PlayerCoins.ToString();
-        gameOverUI.SetActive(true);
+        ShowUI(gameOverUI);
         AudioManager.Instance.StopMusic();
         AudioManager.Instance.PlaySoundEffect(gameOverSound);
     }
@@ -47,14 +48,27 @@ public class UIManager : MonoBehaviour
         HideUI(hudUI);
         gameOverText.text = "You Win!";
         gameOverCoinsText.text = GameManager.Instance.PlayerCoins.ToString();
-        gameOverUI.SetActive(true);
+        ShowUI(gameOverUI);
         AudioManager.Instance.StopMusic();
         AudioManager.Instance.PlaySoundEffect(winSound);
+    }
+
+    public void ShowUI(GameObject ui)
+    {
+        HideAllUI();
+        ui.SetActive(true);
     }
 
     public void HideUI(GameObject ui)
     {
         ui.SetActive(false);
+    }
+
+    public void HideAllUI()
+    {
+        HideUI(gameOverUI);
+        HideUI(hudUI);
+        HideUI(gamePausedUI);
     }
 
     public void UpdateCoinsUI(int coins)
@@ -73,5 +87,37 @@ public class UIManager : MonoBehaviour
     {
         AudioManager.Instance.PlaySoundEffect(buttonClickSound);
         GameManager.Instance.RestartGame();
+    }
+
+    public void OnQuitButtonClicked()
+    {
+        AudioManager.Instance.PlaySoundEffect(buttonClickSound);
+        GameManager.Instance.QuitGame();
+    }
+
+    public void OnPlayButtonClicked()
+    {
+        AudioManager.Instance.PlaySoundEffect(buttonClickSound);
+        // GameManager.Instance.StartGame();
+    }
+
+    public void OnPauseButtonClicked()
+    {
+        AudioManager.Instance.PlaySoundEffect(buttonClickSound);
+        GameManager.Instance.PauseGame();
+        ShowUI(gamePausedUI);
+    }
+
+    public void OnResumeButtonClicked()
+    {
+        AudioManager.Instance.PlaySoundEffect(buttonClickSound);
+        GameManager.Instance.ResumeGame();
+        ShowUI(hudUI);
+    }
+
+    public void OnMainMenuButtonClicked()
+    {
+        AudioManager.Instance.PlaySoundEffect(buttonClickSound);
+        // GameManager.Instance.LoadMainMenu();
     }
 }
