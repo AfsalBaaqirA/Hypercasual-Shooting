@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class WeaponController : MonoBehaviour
@@ -7,7 +6,9 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private List<GameObject> weapons;
     [SerializeField] private PlayerController player;
     [SerializeField] private Transform firePoint;
-    [SerializeField] private float bulletSpeed = 100f;
+    [SerializeField] private float bulletForce = 20f;
+    [SerializeField] private ParticleSystem muzzleFlash;
+    [SerializeField] private ParticleSystem catridgeEjection;
 
     private Weapon currentWeapon;
 
@@ -15,43 +16,42 @@ public class WeaponController : MonoBehaviour
     private float shootingRange;
     private float nextFireTime = 0f;
     private float fireRate;
-    private int damage;
     private string weaponName;
     private GameObject[] enemies;
+    private ObjectPooler objectPooler;
 
     private void Start()
     {
+        objectPooler = ObjectPooler.Instance;
         HideAllWeapons();
     }
 
     private void Update()
     {
-        if (currentWeapon == null || GameManager.Instance.GameState != GameState.Started)
+        if (currentWeapon == null || !GameManager.Instance.IsGameInProgress())
             return;
 
         // Find the nearest enemy within the targeting range
         FindNearestEnemy();
 
         // Check if a target is found and if enough time has passed to fire
-
         if (target != null && Vector3.Distance(transform.position, target.position) <= shootingRange)
         {
             Shoot();
-        }
-        else
-        {
-            player.IsShooting = false;
         }
     }
 
     private void FindNearestEnemy()
     {
-        enemies = GameObject.FindGameObjectsWithTag("Enemy")?.Where(x => x.activeSelf).ToArray();
+        enemies = GameObject.FindGameObjectsWithTag("Enemy");
         float closestDistance = Mathf.Infinity;
         Transform closestEnemy = null;
 
         foreach (GameObject enemy in enemies)
         {
+            if (!enemy.activeSelf)
+                continue;
+
             float distance = Vector3.Distance(transform.position, enemy.transform.position);
             if (distance < closestDistance)
             {
@@ -75,11 +75,13 @@ public class WeaponController : MonoBehaviour
         if (Vector3.Distance(transform.position, target.position) <= shootingRange)
         {
             // Display the target indicator
+            player.Target = target;
             target.GetComponent<EnemyController>().ShowTargetIndicator();
         }
         else
         {
             // Hide the target indicator
+            player.Target = null;
             target.GetComponent<EnemyController>().HideTargetIndicator();
         }
     }
@@ -89,40 +91,41 @@ public class WeaponController : MonoBehaviour
         // Check if enough time has passed to fire
         if (Time.time < nextFireTime)
             return;
-        player.IsShooting = true;
+
         // Perform shooting-related actions (e.g., play shooting animation, spawn particles, etc.)
         GameObject bulletObject = null;
+
         switch (weaponName)
         {
             case "Pistol":
-                bulletObject = ObjectPooler.Instance.GetBulletObjectFromPool();
-                break;
             case "Shotgun":
-                bulletObject = ObjectPooler.Instance.GetBulletObjectFromPool();
-                break;
             case "Machinegun":
-                bulletObject = ObjectPooler.Instance.GetBulletObjectFromPool();
+                bulletObject = objectPooler.GetBulletObjectFromPool();
                 break;
             case "Launcher":
-                bulletObject = ObjectPooler.Instance.GetMissileObjectFromPool();
-                break;
-            default:
+                bulletObject = objectPooler.GetMissileObjectFromPool();
                 break;
         }
 
         bulletObject.transform.position = firePoint.position;
-        bulletObject.transform.rotation = firePoint.rotation;
-        bulletObject.GetComponent<Projectile>().DamageAmount = damage;
+        Vector3 direction = (target.position - firePoint.position).normalized;
+        Quaternion rotation = Quaternion.LookRotation(direction);
+        bulletObject.transform.rotation = rotation;
+        bulletObject.GetComponent<ProjectileController>().Weapon = currentWeapon;
         bulletObject.SetActive(true);
-        bulletObject.GetComponent<Rigidbody>().velocity = bulletObject.transform.forward * bulletSpeed;
+
+        Rigidbody bulletRigidbody = bulletObject.GetComponent<Rigidbody>();
+        if (bulletRigidbody != null)
+        {
+            bulletRigidbody.AddForce(firePoint.transform.forward * bulletForce, ForceMode.Impulse);
+        }
+
         AudioManager.Instance.PlaySoundEffect(currentWeapon.FireSound);
+        muzzleFlash.Play();
+        catridgeEjection.Play();
+
         // Update the next fire time
         nextFireTime = Time.time + fireRate;
-
-        // Smoothly rotate towards the target
-        Vector3 direction = (target.position - transform.position).normalized;
-        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10f);
     }
 
     public void EquipWeapon(Weapon weapon)
@@ -136,22 +139,12 @@ public class WeaponController : MonoBehaviour
         // Set the shooting range
         shootingRange = currentWeapon.ShootingRange;
 
-        // Set the damage
-        damage = currentWeapon.Damage;
-
         // Set the weapon name
         weaponName = currentWeapon.WeaponName;
 
         foreach (GameObject wp in weapons)
         {
-            if (wp.name == weaponName)
-            {
-                wp.SetActive(true);
-            }
-            else
-            {
-                wp.SetActive(false);
-            }
+            wp.SetActive(wp.name == weaponName);
         }
 
         GameManager.Instance.WeaponName = weaponName;

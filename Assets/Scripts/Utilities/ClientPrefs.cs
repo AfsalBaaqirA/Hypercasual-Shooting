@@ -7,49 +7,83 @@ public static class ClientPrefs
 
     public static void Initialize()
     {
-        if (!PlayerPrefs.HasKey(MusicToggleKey))
+        try
         {
-            PlayerPrefs.SetInt(MusicToggleKey, 1);
-        }
+            if (!PlayerPrefs.HasKey(MusicToggleKey))
+            {
+                PlayerPrefs.SetInt(MusicToggleKey, 1);
+            }
 
-        if (!PlayerPrefs.HasKey(SoundEffectsToggleKey))
+            if (!PlayerPrefs.HasKey(SoundEffectsToggleKey))
+            {
+                PlayerPrefs.SetInt(SoundEffectsToggleKey, 1);
+            }
+        }
+        catch (PlayerPrefsException ex)
         {
-            PlayerPrefs.SetInt(SoundEffectsToggleKey, 1);
+            Debug.LogError("Error initializing client preferences: " + ex.Message);
         }
     }
 
     public static bool GetMusicToggle()
     {
-        return PlayerPrefs.GetInt(MusicToggleKey, 1) == 1;
+        try
+        {
+            return PlayerPrefs.GetInt(MusicToggleKey, 0) == 1;
+        }
+        catch (PlayerPrefsException ex)
+        {
+            Debug.LogError("Error getting music toggle: " + ex.Message);
+            return true; // Return a default value in case of error
+        }
     }
 
     public static void SetMusicToggle(bool toggle)
     {
-        PlayerPrefs.SetInt(MusicToggleKey, toggle ? 1 : 0);
+        try
+        {
+            PlayerPrefs.SetInt(MusicToggleKey, toggle ? 1 : 0);
+        }
+        catch (PlayerPrefsException ex)
+        {
+            Debug.LogError("Error setting music toggle: " + ex.Message);
+        }
     }
 
     public static bool GetSoundEffectsToggle()
     {
-        return PlayerPrefs.GetInt(SoundEffectsToggleKey, 1) == 1;
+        try
+        {
+            return PlayerPrefs.GetInt(SoundEffectsToggleKey, 0) == 1;
+        }
+        catch (PlayerPrefsException ex)
+        {
+            Debug.LogError("Error getting sound effects toggle: " + ex.Message);
+            return true; // Return a default value in case of error
+        }
     }
 
     public static void SetSoundEffectsToggle(bool toggle)
     {
-        PlayerPrefs.SetInt(SoundEffectsToggleKey, toggle ? 1 : 0);
+        try
+        {
+            PlayerPrefs.SetInt(SoundEffectsToggleKey, toggle ? 1 : 0);
+        }
+        catch (PlayerPrefsException ex)
+        {
+            Debug.LogError("Error setting sound effects toggle: " + ex.Message);
+        }
     }
 
     public static void ResetClientPrefs()
     {
-        PlayerPrefs.DeleteAll();
-    }
-
-    public static bool GetTutorialCompleted()
-    {
-        return PlayerPrefs.GetInt("TutorialCompleted", 0) == 1;
-    }
-
-    public static void SetTutorialCompleted(bool completed)
-    {
-        PlayerPrefs.SetInt("TutorialCompleted", completed ? 1 : 0);
+        try
+        {
+            PlayerPrefs.DeleteAll();
+        }
+        catch (PlayerPrefsException ex)
+        {
+            Debug.LogError("Error resetting client preferences: " + ex.Message);
+        }
     }
 }

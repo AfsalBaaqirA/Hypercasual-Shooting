@@ -28,8 +28,6 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         HideUI(gameOverUI);
-
-
         coinsText.text = GameManager.Instance.PlayerCoins.ToString();
         weaponNameText.text = GameManager.Instance.WeaponName;
     }

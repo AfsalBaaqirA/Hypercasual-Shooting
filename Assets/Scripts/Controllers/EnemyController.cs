@@ -9,34 +9,37 @@ public class EnemyController : BaseController
 
     private Transform player;
     private int currentHealth;
+    private bool isDead = false;
 
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         currentHealth = maxHealth;
 
-        // Hide the target indicator
         HideTargetIndicator();
     }
 
     private void Update()
     {
-        if (GameManager.Instance.GameState != GameState.Started)
+        if (!GameManager.Instance.IsGameInProgress())
             return;
 
-        // Check if player is within detection range
+        // Check if the player is within detection range
         if (Vector3.Distance(transform.position, player.position) < detectionRange)
         {
             // Move towards the player
             this.movementDirection = (player.position - transform.position).normalized;
         }
+        else
+        {
+            // Stop moving
+            this.movementDirection = Vector3.zero;
+        }
     }
-
 
     private void FixedUpdate()
     {
-        // Check if the game is started or over
-        if (GameManager.Instance.GameState == GameState.Started)
+        if (GameManager.Instance.IsGameInProgress())
         {
             Move();
         }
@@ -44,27 +47,27 @@ public class EnemyController : BaseController
 
     public void TakeDamage(int damage)
     {
-        currentHealth -= damage;
+        if (isDead)
+            return;
 
-        // Check if the enemy is dead
+        currentHealth -= damage;
         if (currentHealth <= 0)
         {
+            isDead = true;
             Die();
         }
     }
 
     private void Die()
     {
-        // Perform death-related actions (e.g., play death animation, spawn particles, etc.)
         Debug.Log("Enemy died");
-        // Set back to pool
-        gameObject.SetActive(false);
+        SpawnCoin();
+        Destroy(gameObject);
     }
 
     public void ShowTargetIndicator()
     {
         Debug.Log("Show target indicator");
-        // Show the target indicator
         targetIndicator.SetActive(true);
         // healthBar.SetActive(true);
     }
@@ -72,7 +75,6 @@ public class EnemyController : BaseController
     public void HideTargetIndicator()
     {
         Debug.Log("Hide target indicator");
-        // Hide the target indicator
         targetIndicator.SetActive(false);
         // healthBar.SetActive(false);
     }
@@ -80,6 +82,12 @@ public class EnemyController : BaseController
     public void Reset()
     {
         currentHealth = maxHealth;
+    }
 
+    private void SpawnCoin()
+    {
+        GameObject coin = ObjectPooler.Instance.GetCoinObjectFromPool();
+        coin.transform.position = this.transform.position + new Vector3(0, 1, 0);
+        coin.SetActive(true);
     }
 }

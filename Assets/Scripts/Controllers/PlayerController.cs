@@ -1,54 +1,108 @@
 using UnityEngine;
 
-public class PlayerController : BaseController
+public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private WeaponController weaponController;
+    private PlayerInputAction playerInput;
 
-    private Transform target;
-    private InputManager gameInput;
-    private GameObject[] enemies;
+    private CharacterController controller;
+    private Rigidbody rb;
+    private Animator animator;
 
-    protected override void Awake()
+    private Vector3 playerVelocity;
+
+    [SerializeField] private Transform target;
+
+    public Transform Target
     {
-        base.Awake();
-    }
-
-    private void Start()
-    {
-        gameInput = InputManager.Instance;
-    }
-
-    private void Update()
-    {
-        // Check if the game is started or over
-        if (GameManager.Instance.GameState != GameState.Started)
-            return;
-
-        // Handle movement input
-        HandleMovementInput(gameInput.GetMovementInputNormalized());
-    }
-
-    private void FixedUpdate()
-    {
-        if (GameManager.Instance.GameState != GameState.Started)
-            return;
-
-        // Check if the player has fallen off the map
-        if (transform.position.y < -10)
+        get { return target; }
+        set
         {
-            GameManager.Instance.GameOver();
+            target = value;
+        }
+    }
+
+    private bool groundedPlayer;
+    [SerializeField]
+    private float playerSpeed = 5f;
+    [SerializeField]
+    private float gravityValue = -9.81f;
+
+    private void Awake()
+    {
+        playerInput = new PlayerInputAction();
+        controller = GetComponent<CharacterController>();
+        rb = GetComponentInChildren<Rigidbody>();
+        animator = GetComponentInChildren<Animator>();
+    }
+
+    private void OnEnable()
+    {
+        playerInput.Enable();
+    }
+
+    private void OnDisable()
+    {
+        playerInput.Disable();
+    }
+
+    void FixedUpdate()
+    {
+        if (!GameManager.Instance.IsGameInProgress())
+            return;
+
+        groundedPlayer = controller.isGrounded;
+        if (groundedPlayer && playerVelocity.y < 0)
+        {
+            playerVelocity.y = 0f;
+        }
+
+        Vector3 movementInput = playerInput.Player.Move.ReadValue<Vector2>();
+        Vector3 move = new Vector3(movementInput.x, 0f, movementInput.y);
+        controller.Move(move * Time.deltaTime * playerSpeed);
+
+        playerVelocity.y += gravityValue * Time.deltaTime;
+        controller.Move(playerVelocity * Time.deltaTime);
+
+        // Set Player Rotation to Face Target
+        if (target)
+        {
+            Vector3 targetDirection = target.position - transform.position;
+            Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, playerSpeed * Time.deltaTime, 0.0f);
+            transform.rotation = Quaternion.LookRotation(newDirection);
         }
         else
         {
-            Move();
+            // Set Player Rotation to Face Movement Direction
+            if (move != Vector3.zero)
+            {
+                transform.rotation = Quaternion.LookRotation(move);
+            }
         }
+
+
+        // Check if the player y position is below the kill plane
+        if (transform.position.y < GameManager.Instance.KillPlaneY)
+        {
+            GameManager.Instance.GameOver();
+        }
+
+        HandleAnimation(move.magnitude);
     }
 
-    private void HandleMovementInput(Vector2 movementInput)
+    private void HandleAnimation(float movementMagnitude)
     {
-        Vector2 movementVector = movementInput;
-
-        this.movementDirection = new Vector3(movementVector.x, 0f, movementVector.y);
+        if (movementMagnitude > 0f)
+        {
+            // Trigger the run animation
+            animator.SetFloat("Blend", 1);
+            animator.SetFloat("BlendSide", 1);
+        }
+        else
+        {
+            // Trigger the idle animation
+            animator.SetFloat("Blend", 0);
+            animator.SetFloat("BlendSide", 0);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -58,5 +112,11 @@ public class PlayerController : BaseController
         {
             GameManager.Instance.GameOver();
         }
+    }
+
+    public void CollectCoin()
+    {
+        // Perform coin collection actions (increase player's coins, play sound, etc.)
+        GameManager.Instance.PlayerCoins++;
     }
 }

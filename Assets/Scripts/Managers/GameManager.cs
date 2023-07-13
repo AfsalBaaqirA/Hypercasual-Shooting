@@ -6,16 +6,16 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     [SerializeField] private AudioClip musicClip;
+    [SerializeField] private float killPlaneY = -10f;
 
     public GameState GameState { get; private set; }
-    public GameSettings gameSettings { get; internal set; }
 
     private int playerCoins = 0;
     private string weaponName = "No Weapon";
 
     public int PlayerCoins
     {
-        get { return playerCoins; }
+        get => playerCoins;
         set
         {
             playerCoins = value;
@@ -25,13 +25,15 @@ public class GameManager : MonoBehaviour
 
     public string WeaponName
     {
-        get { return weaponName; }
+        get => weaponName;
         set
         {
             weaponName = value;
             UIManager.Instance.UpdateWeaponNameUI(weaponName);
         }
     }
+
+    public float KillPlaneY => killPlaneY;
 
     private void Awake()
     {
@@ -43,33 +45,28 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        gameSettings = new GameSettings();
-        gameSettings.isMusicOn = ClientPrefs.GetMusicToggle();
-        gameSettings.isSoundOn = ClientPrefs.GetSoundEffectsToggle();
+        GameState = GameState.Started;
         AudioManager.Instance.PlayMusic(musicClip);
     }
 
     public void GameOver()
     {
         GameState = GameState.Over;
-
-        // Display game over UI
         UIManager.Instance.ShowGameOverUI();
     }
 
     public void GameWon()
     {
         GameState = GameState.Won;
-
-        // Display win UI
         UIManager.Instance.ShowWinUI();
     }
 
     public void RestartGame()
     {
-        // Reset the scene
-        SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+
+    public bool IsGameInProgress() => GameState == GameState.Started;
 }
 
 public enum GameState
@@ -77,10 +74,4 @@ public enum GameState
     Started,
     Over,
     Won
-}
-
-public class GameSettings
-{
-    public bool isMusicOn;
-    public bool isSoundOn;
 }

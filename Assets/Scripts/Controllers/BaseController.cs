@@ -12,12 +12,15 @@ public class BaseController : MonoBehaviour
     protected Animator animator;
     private float gravity = -9.81f;
     private float gravityVelocity = 0f;
-    private bool isShooting = false;
+    private Transform target;
 
-    public bool IsShooting
+    public Transform Target
     {
-        get { return isShooting; }
-        set { isShooting = value; }
+        get { return target; }
+        set
+        {
+            target = value;
+        }
     }
 
     protected virtual void Awake()
@@ -37,7 +40,7 @@ public class BaseController : MonoBehaviour
         // Handle the animation
         HandleAnimation();
 
-        if (!isShooting)
+        if (!target)
         {
             // Handle the rotation
             HandleRotationInput();
