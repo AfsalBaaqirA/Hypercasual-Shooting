@@ -54,7 +54,8 @@ public class ObjectPooler : MonoBehaviour
             return obj;
         }
 
-        return ExpandPool(pool);
+        // return ExpandPool(pool);
+        return null;
     }
 
     private GameObject ExpandPool(Queue<GameObject> pool)
@@ -108,5 +109,12 @@ public class ObjectPooler : MonoBehaviour
             GameObject obj = pool.Dequeue();
             obj.SetActive(false);
         }
+    }
+
+    public void Update()
+    {
+        Debug.Log("Bullet pool size: " + bulletPool.Count);
+        Debug.Log("Missile pool size: " + missilePool.Count);
+        Debug.Log("Coin pool size: " + coinPool.Count);
     }
 }

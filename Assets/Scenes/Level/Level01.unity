@@ -3877,7 +3877,7 @@ MonoBehaviour:
     type: 3}
   coinPrefab: {fileID: 6342597133527556946, guid: 98153faf8fe8e4fbebc749049140a24e,
     type: 3}
-  poolSize: 20
+  poolSize: 50
 --- !u!4 &1024906588
 Transform:
   m_ObjectHideFlags: 0

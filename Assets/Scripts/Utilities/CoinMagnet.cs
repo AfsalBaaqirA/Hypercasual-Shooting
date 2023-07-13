@@ -18,8 +18,11 @@ public class CoinMagnet : MonoBehaviour
 
         if (player != null)
         {
-            // Move towards the player in cubic interpolation
-            transform.position = Vector3.Lerp(transform.position, player.position, moveSpeed * Time.deltaTime);
+            // Move towards the player in collectible effect mode
+            transform.position = Vector3.MoveTowards(transform.position, player.position, moveSpeed * Time.deltaTime);
+            // Rotate the coin in collectible effect mode
+            transform.Rotate(Vector3.up * 100f * Time.deltaTime);
+
         }
     }
 
