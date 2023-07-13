@@ -1,6 +1,7 @@
 using UnityEngine;
+using UnityEngine.AI;
 
-public class EnemyController : BaseController
+public class EnemyController : MonoBehaviour
 {
     [SerializeField] private float detectionRange = 5f;
     [SerializeField] private int maxHealth = 100;
@@ -10,6 +11,14 @@ public class EnemyController : BaseController
     private Transform player;
     private int currentHealth;
     private bool isDead = false;
+    private NavMeshAgent navMeshAgent;
+    private Animator animator;
+
+    private void Awake()
+    {
+        navMeshAgent = GetComponent<NavMeshAgent>();
+        animator = GetComponentInChildren<Animator>();
+    }
 
     private void Start()
     {
@@ -27,21 +36,29 @@ public class EnemyController : BaseController
         // Check if the player is within detection range
         if (Vector3.Distance(transform.position, player.position) < detectionRange)
         {
-            // Move towards the player
-            this.movementDirection = (player.position - transform.position).normalized;
+            navMeshAgent.destination = player.position;
         }
         else
         {
-            // Stop moving
-            this.movementDirection = Vector3.zero;
+            navMeshAgent.destination = transform.position;
         }
+
+        HandleAnimation(navMeshAgent.velocity.magnitude);
     }
 
-    private void FixedUpdate()
+    private void HandleAnimation(float movementMagnitude)
     {
-        if (GameManager.Instance.IsGameInProgress())
+        if (movementMagnitude > 0f)
         {
-            Move();
+            // Trigger the run animation
+            animator.SetFloat("Blend", 1);
+            animator.SetFloat("BlendSide", 1);
+        }
+        else
+        {
+            // Trigger the idle animation
+            animator.SetFloat("Blend", 0);
+            animator.SetFloat("BlendSide", 0);
         }
     }
 
@@ -67,14 +84,12 @@ public class EnemyController : BaseController
 
     public void ShowTargetIndicator()
     {
-        Debug.Log("Show target indicator");
         targetIndicator.SetActive(true);
         // healthBar.SetActive(true);
     }
 
     public void HideTargetIndicator()
     {
-        Debug.Log("Hide target indicator");
         targetIndicator.SetActive(false);
         // healthBar.SetActive(false);
     }

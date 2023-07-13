@@ -63,7 +63,26 @@ public class GameManager : MonoBehaviour
 
     public void RestartGame()
     {
+        ResumeGame();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void QuitGame()
+    {
+        if (Application.isEditor)
+            UnityEditor.EditorApplication.isPlaying = false;
+        else
+            Application.Quit();
+    }
+
+    public void PauseGame()
+    {
+        Time.timeScale = 0f;
+    }
+
+    public void ResumeGame()
+    {
+        Time.timeScale = 1f;
     }
 
     public bool IsGameInProgress() => GameState == GameState.Started;

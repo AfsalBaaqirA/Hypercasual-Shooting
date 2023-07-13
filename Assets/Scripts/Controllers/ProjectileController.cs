@@ -21,6 +21,7 @@ public class ProjectileController : MonoBehaviour
 
     private void DisableProjectile()
     {
+        weapon = null;
         ObjectPooler.Instance.ReturnObjectToPool(gameObject);
     }
 
