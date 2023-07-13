@@ -93,20 +93,18 @@ public class PlayerController : MonoBehaviour
     {
         if (movementMagnitude > 0f)
         {
-            // Trigger the run animation
-            animator.SetFloat("Blend", 1);
             animator.SetFloat("BlendSide", 1);
         }
         else
         {
-            // Trigger the idle animation
-            animator.SetFloat("Blend", 0);
             animator.SetFloat("BlendSide", 0);
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!GameManager.Instance.IsGameInProgress())
+            return;
         // Check if the player has collided with an enemy
         if (other.CompareTag("Enemy"))
         {

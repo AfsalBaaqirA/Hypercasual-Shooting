@@ -50,14 +50,10 @@ public class EnemyController : MonoBehaviour
     {
         if (movementMagnitude > 0f)
         {
-            // Trigger the run animation
-            animator.SetFloat("Blend", 1);
             animator.SetFloat("BlendSide", 1);
         }
         else
         {
-            // Trigger the idle animation
-            animator.SetFloat("Blend", 0);
             animator.SetFloat("BlendSide", 0);
         }
     }
@@ -68,6 +64,10 @@ public class EnemyController : MonoBehaviour
             return;
 
         currentHealth -= damage;
+        healthBar.SetActive(true);
+        healthBar.GetComponent<HealthBar>().SetHealth(currentHealth);
+        Invoke("HideHealthBar", 2f);
+
         if (currentHealth <= 0)
         {
             isDead = true;
@@ -75,9 +75,13 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    private void HideHealthBar()
+    {
+        healthBar.SetActive(false);
+    }
+
     private void Die()
     {
-        Debug.Log("Enemy died");
         SpawnCoin();
         Destroy(gameObject);
     }
@@ -85,13 +89,11 @@ public class EnemyController : MonoBehaviour
     public void ShowTargetIndicator()
     {
         targetIndicator.SetActive(true);
-        // healthBar.SetActive(true);
     }
 
     public void HideTargetIndicator()
     {
         targetIndicator.SetActive(false);
-        // healthBar.SetActive(false);
     }
 
     public void Reset()

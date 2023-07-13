@@ -15,6 +15,6 @@ MonoBehaviour:
   weaponName: Machinegun
   fireRate: 0.2
   damage: 10
-  shootingRange: 20
+  shootingRange: 15
   fireSound: {fileID: 8300000, guid: 68a8201f51ef61c468510ca13e3cfff0, type: 3}
   weaponFireType: 0
