@@ -49,7 +49,6 @@ public class AdsManager : MonoBehaviour
 
     public void CaptureScreenshot()
     {
-        // Don't capture screenshot if the player is dead
         if (Application.isMobilePlatform)
             return;
 
