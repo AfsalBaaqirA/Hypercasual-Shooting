@@ -133,4 +133,9 @@ public class PlayerController : MonoBehaviour
     {
         GameManager.Instance.PlayerCoins++;
     }
+
+    public void PlayerWonAnimation()
+    {
+        animator.Play("Anim-Celebration-Dance01");
+    }
 }

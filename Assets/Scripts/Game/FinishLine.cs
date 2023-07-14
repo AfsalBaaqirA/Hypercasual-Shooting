@@ -6,6 +6,7 @@ public class FinishLine : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            other.GetComponent<PlayerController>().PlayerWonAnimation();
             GameManager.Instance.GameWon();
         }
     }
