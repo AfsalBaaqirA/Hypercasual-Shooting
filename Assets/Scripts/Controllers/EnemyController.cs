@@ -61,7 +61,7 @@ public class EnemyController : MonoBehaviour
     private void HandleAnimation(float movementMagnitude)
     {
         animator.SetFloat(BlendSideHash, movementMagnitude > 0f ? AnimatorFloatValue : AnimatorZeroValue);
-        animator.Play(movementMagnitude > 0f ? "Anim-RunArms" : "Anim-Celebration-Dance01");
+        animator.Play(movementMagnitude > 0f ? "Anim-Walk-Enemy" : "Anim-Celebration-Dance01");
     }
 
     public void TakeDamage(int damage)
