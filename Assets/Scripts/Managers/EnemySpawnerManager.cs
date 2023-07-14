@@ -35,7 +35,7 @@ public class EnemySpawnerManager : MonoBehaviour
     {
         Vector3 randomPosition = new Vector3(
             Random.Range(collider.bounds.min.x, collider.bounds.max.x),
-            0,
+            1,
             Random.Range(collider.bounds.min.z, collider.bounds.max.z)
         );
         return randomPosition;
