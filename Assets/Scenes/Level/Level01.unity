@@ -4146,8 +4146,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 751872f1d58111e408835d6b0da82837, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPrefab: {fileID: 1172102263697165845, guid: dfd1f306f82b944828f7a995c92080af,
-    type: 3}
   initialSpawnAreaCollider: {fileID: 1356630174}
   spawnEnemiesCount: 3
 --- !u!1 &1024906586
@@ -4338,10 +4336,10 @@ RectTransform:
   m_Father: {fileID: 1542382699}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1231858496
 GameObject:
