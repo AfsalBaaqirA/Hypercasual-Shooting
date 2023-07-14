@@ -7,19 +7,28 @@ public class FloatingRotation : MonoBehaviour
     [SerializeField] private float floatingSpeed = 1f;
 
     private Vector3 initialPosition;
+    private float initialTime;
 
     private void Start()
     {
         initialPosition = transform.position;
+        initialTime = Time.time;
     }
 
     private void Update()
     {
-        // Rotate the object around its local Y-axis
-        transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
+        RotateObject();
+        FloatObject();
+    }
 
-        // Float the object up and down along its Y-axis
-        float newY = initialPosition.y + Mathf.Sin(Time.time * floatingSpeed) * floatingHeight;
+    private void RotateObject()
+    {
+        transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
+    }
+
+    private void FloatObject()
+    {
+        float newY = initialPosition.y + Mathf.Sin((Time.time - initialTime) * floatingSpeed) * floatingHeight;
         transform.position = new Vector3(transform.position.x, newY, transform.position.z);
     }
 }

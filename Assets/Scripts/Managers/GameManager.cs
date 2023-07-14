@@ -40,21 +40,31 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
             Instance = this;
         else
+        {
             Destroy(gameObject);
+            return;
+        }
     }
 
     private void Start()
     {
-        GameState = GameState.Started;
+        GameState = GameState.None;
+        UIManager.Instance.ShowStartUI();
         AudioManager.Instance.PlayMusic(musicClip);
     }
 
     private void Update()
     {
-        if (GameState == GameState.Started && PlayerController.Instance.transform.position.y < killPlaneY)
+        if (IsGameInProgress() && PlayerController.Instance.transform.position.y < killPlaneY)
         {
             GameOver();
         }
+    }
+
+    public void StartGame()
+    {
+        GameState = GameState.Started;
+        UIManager.Instance.ShowHUDUI();
     }
 
     public void GameOver()
@@ -95,6 +105,7 @@ public class GameManager : MonoBehaviour
 
 public enum GameState
 {
+    None,
     Started,
     Over,
     Won

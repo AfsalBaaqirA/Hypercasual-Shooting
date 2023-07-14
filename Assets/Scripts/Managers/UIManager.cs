@@ -5,6 +5,7 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
 
+    [SerializeField] private GameObject startUI;
     [SerializeField] private GameObject gameOverUI;
     [SerializeField] private GameObject hudUI;
     [SerializeField] private GameObject gamePausedUI;
@@ -28,7 +29,6 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        ShowUI(hudUI);
         coinsText.text = GameManager.Instance.PlayerCoins.ToString();
         weaponNameText.text = GameManager.Instance.WeaponName;
     }
@@ -53,6 +53,16 @@ public class UIManager : MonoBehaviour
         AudioManager.Instance.PlaySoundEffect(winSound);
     }
 
+    public void ShowStartUI()
+    {
+        ShowUI(startUI);
+    }
+
+    public void ShowHUDUI()
+    {
+        ShowUI(hudUI);
+    }
+
     public void ShowUI(GameObject ui)
     {
         HideAllUI();
@@ -66,6 +76,7 @@ public class UIManager : MonoBehaviour
 
     public void HideAllUI()
     {
+        HideUI(startUI);
         HideUI(gameOverUI);
         HideUI(hudUI);
         HideUI(gamePausedUI);
@@ -98,7 +109,7 @@ public class UIManager : MonoBehaviour
     public void OnPlayButtonClicked()
     {
         AudioManager.Instance.PlaySoundEffect(buttonClickSound);
-        // GameManager.Instance.StartGame();
+        GameManager.Instance.StartGame();
     }
 
     public void OnPauseButtonClicked()
@@ -113,11 +124,5 @@ public class UIManager : MonoBehaviour
         AudioManager.Instance.PlaySoundEffect(buttonClickSound);
         GameManager.Instance.ResumeGame();
         ShowUI(hudUI);
-    }
-
-    public void OnMainMenuButtonClicked()
-    {
-        AudioManager.Instance.PlaySoundEffect(buttonClickSound);
-        // GameManager.Instance.LoadMainMenu();
     }
 }
