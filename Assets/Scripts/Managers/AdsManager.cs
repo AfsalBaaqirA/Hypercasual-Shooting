@@ -49,6 +49,10 @@ public class AdsManager : MonoBehaviour
 
     public void CaptureScreenshot()
     {
+        // Don't capture screenshot if the player is dead
+        if (Application.isMobilePlatform)
+            return;
+
         string timestamp = System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
         string fileName = $"Screenshot_{timestamp}.png";
         string filePath = Path.Combine(mediaExportPath, fileName);
