@@ -10,6 +10,7 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private ParticleSystem catridgeEjection;
 
     private Weapon currentWeapon;
+    private Animator animator;
 
     public Weapon CurrentWeapon => currentWeapon;
 
@@ -20,6 +21,12 @@ public class WeaponController : MonoBehaviour
     private string weaponName;
     private GameObject[] enemies;
     private ObjectPooler objectPooler;
+
+
+    private void Awake()
+    {
+        animator = GetComponentInChildren<Animator>();
+    }
 
     private void Start()
     {
@@ -143,6 +150,22 @@ public class WeaponController : MonoBehaviour
         foreach (GameObject wp in weapons)
         {
             wp.SetActive(wp.name == weaponName);
+        }
+
+        switch (weaponName)
+        {
+            case "Pistol":
+                animator.Play("Anim-Pistol");
+                break;
+            case "Shotgun":
+                animator.Play("Anim-Shotgun");
+                break;
+            case "Machinegun":
+                animator.Play("Anim-Machinegun");
+                break;
+            case "Launcher":
+                animator.Play("Anim-Launcher");
+                break;
         }
 
         GameManager.Instance.WeaponName = weaponName;
