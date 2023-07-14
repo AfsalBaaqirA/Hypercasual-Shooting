@@ -1,14 +1,21 @@
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class CoinMagnet : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 15f;
 
     private Transform player;
+    private ObjectPool<CoinMagnet> coinPool;
 
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
+    }
+
+    public void SetPool(ObjectPool<CoinMagnet> pool)
+    {
+        coinPool = pool;
     }
 
     private void Update()
@@ -36,10 +43,9 @@ public class CoinMagnet : MonoBehaviour
 
     private void CollectCoin()
     {
-        Debug.Log("Coin collected!");
         player.GetComponent<PlayerController>().CollectCoin();
 
-        // Deactivate the coin and return it to the object pool
-        ObjectPooler.Instance.ReturnObjectToPool(gameObject);
+        // Disable the coin
+        coinPool.Release(this);
     }
 }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Pool;
 
 public class EnemyController : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private GameObject healthBar;
     [SerializeField] private GameObject targetIndicator;
 
+    private ObjectPool<EnemyController> _enemyPool;
     private Transform player;
     private int currentHealth;
     private bool isDead = false;
@@ -23,9 +25,19 @@ public class EnemyController : MonoBehaviour
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
-        currentHealth = maxHealth;
+    }
 
-        HideTargetIndicator();
+    private void OnEnable()
+    {
+        currentHealth = maxHealth;
+        isDead = false;
+        healthBar.SetActive(false);
+        targetIndicator.SetActive(false);
+    }
+
+    public void SetPool(ObjectPool<EnemyController> enemyPool)
+    {
+        this._enemyPool = enemyPool;
     }
 
     private void Update()
@@ -62,10 +74,11 @@ public class EnemyController : MonoBehaviour
     {
         if (isDead)
             return;
-
+        CancelInvoke("HideHealthBar");
+        Debug.Log("Enemy taking damage" + this.name);
         currentHealth -= damage;
-        healthBar.SetActive(true);
-        healthBar.GetComponent<HealthBar>().SetHealth(currentHealth);
+        this.healthBar.SetActive(true);
+        this.healthBar.GetComponent<HealthBar>().SetHealth(currentHealth);
         Invoke("HideHealthBar", 2f);
 
         if (currentHealth <= 0)
@@ -83,7 +96,7 @@ public class EnemyController : MonoBehaviour
     private void Die()
     {
         SpawnCoin();
-        Destroy(gameObject);
+        _enemyPool.Release(this);
     }
 
     public void ShowTargetIndicator()
@@ -96,15 +109,9 @@ public class EnemyController : MonoBehaviour
         targetIndicator.SetActive(false);
     }
 
-    public void Reset()
-    {
-        currentHealth = maxHealth;
-    }
-
     private void SpawnCoin()
     {
-        GameObject coin = ObjectPooler.Instance.GetCoinObjectFromPool();
+        CoinMagnet coin = ObjectPooler.Instance.GetCoin();
         coin.transform.position = this.transform.position + new Vector3(0, 1, 0);
-        coin.SetActive(true);
     }
 }

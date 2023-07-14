@@ -1,120 +1,223 @@
+using System;
 using UnityEngine;
-using System.Collections.Generic;
+using UnityEngine.Pool;
 
 public class ObjectPooler : MonoBehaviour
 {
     public static ObjectPooler Instance { get; private set; }
 
+    public int InitialPoolSize => initialPoolSize;
+    public int MaxPoolSize => maxPoolSize;
+
+    [SerializeField] private bool collectionCheck = true;
+    [SerializeField] private int initialPoolSize = 10;
+    [SerializeField] private int maxPoolSize = 100;
+    [SerializeField] private EnemyController enemyPrefab;
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private GameObject missilePrefab;
     [SerializeField] private GameObject coinPrefab;
-    [SerializeField] private int poolSize = 20;
+    [SerializeField] private ParticlePool bulletParticle;
+    [SerializeField] private ParticlePool missileParticle;
 
-    private Queue<GameObject> bulletPool;
-    private Queue<GameObject> missilePool;
-    private Queue<GameObject> coinPool;
-
-    private Dictionary<Queue<GameObject>, GameObject> poolPrefabMap;
+    private ObjectPool<EnemyController> enemyPool;
+    private ObjectPool<Projectile> bulletPool;
+    private ObjectPool<Projectile> missilePool;
+    private ObjectPool<CoinMagnet> coinPool;
+    private ObjectPool<ParticlePool> bulletParticlePool;
+    private ObjectPool<ParticlePool> missileParticlePool;
 
     private void Awake()
     {
-        Instance = this;
-        bulletPool = CreateObjectPool(bulletPrefab);
-        missilePool = CreateObjectPool(missilePrefab);
-        coinPool = CreateObjectPool(coinPrefab);
-
-        poolPrefabMap = new Dictionary<Queue<GameObject>, GameObject>
-        {
-            { bulletPool, bulletPrefab },
-            { missilePool, missilePrefab },
-            { coinPool, coinPrefab }
-        };
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+        enemyPool = new ObjectPool<EnemyController>(CreateEnemy, OnEnemyPooled, OnEnemyDePooled, OnEnemyDestroyed, collectionCheck, initialPoolSize, maxPoolSize);
+        bulletPool = new ObjectPool<Projectile>(CreateBullet, OnBulletPooled, OnBulletDePooled, OnBulletDestroyed, collectionCheck, initialPoolSize, maxPoolSize);
+        missilePool = new ObjectPool<Projectile>(CreateMissile, OnMissilePooled, OnMissileDePooled, OnMissileDestroyed, collectionCheck, initialPoolSize, maxPoolSize);
+        coinPool = new ObjectPool<CoinMagnet>(CreateCoin, OnCoinPooled, OnCoinDePooled, OnCoinDestroyed, collectionCheck, initialPoolSize, maxPoolSize);
+        bulletParticlePool = new ObjectPool<ParticlePool>(CreateBulletParticle, OnBulletParticlePooled, OnBulletParticleDePooled, OnBulletParticleDestroyed, collectionCheck, initialPoolSize, maxPoolSize);
+        missileParticlePool = new ObjectPool<ParticlePool>(CreateMissileParticle, OnMissileParticlePooled, OnMissileParticleDePooled, OnMissileParticleDestroyed, collectionCheck, initialPoolSize, maxPoolSize);
     }
 
-    private Queue<GameObject> CreateObjectPool(GameObject prefab)
+    private EnemyController CreateEnemy()
     {
-        Queue<GameObject> pool = new Queue<GameObject>();
+        EnemyController enemy = Instantiate(enemyPrefab);
+        enemy.gameObject.SetActive(false);
+        enemy.SetPool(enemyPool);
+        return enemy;
+    }
 
-        for (int i = 0; i < poolSize; i++)
+    private void OnEnemyPooled(EnemyController enemy)
+    {
+        enemy.gameObject.SetActive(true);
+    }
+
+    private void OnEnemyDePooled(EnemyController enemy)
+    {
+        enemy.gameObject.SetActive(false);
+    }
+
+    private void OnEnemyDestroyed(EnemyController enemy)
+    {
+        Destroy(enemy.gameObject);
+    }
+
+    private Projectile CreateBullet()
+    {
+        Projectile bullet = Instantiate(bulletPrefab).GetComponent<Projectile>();
+        bullet.gameObject.SetActive(false);
+        bullet.SetPool(bulletPool);
+        return bullet;
+    }
+
+    private void OnBulletPooled(Projectile bullet)
+    {
+        bullet.gameObject.SetActive(true);
+    }
+
+    private void OnBulletDePooled(Projectile bullet)
+    {
+        bullet.gameObject.SetActive(false);
+    }
+
+    private void OnBulletDestroyed(Projectile bullet)
+    {
+        Destroy(bullet.gameObject);
+    }
+
+    private Projectile CreateMissile()
+    {
+        Projectile missile = Instantiate(missilePrefab).GetComponent<Projectile>();
+        missile.gameObject.SetActive(false);
+        missile.SetPool(missilePool);
+        return missile;
+    }
+
+    private void OnMissilePooled(Projectile missile)
+    {
+        missile.gameObject.SetActive(true);
+    }
+
+    private void OnMissileDePooled(Projectile missile)
+    {
+        missile.gameObject.SetActive(false);
+    }
+
+    private void OnMissileDestroyed(Projectile missile)
+    {
+        Destroy(missile.gameObject);
+    }
+
+    private CoinMagnet CreateCoin()
+    {
+        CoinMagnet coin = Instantiate(coinPrefab).GetComponent<CoinMagnet>();
+        coin.gameObject.SetActive(false);
+        coin.SetPool(coinPool);
+        return coin;
+    }
+
+    private void OnCoinPooled(CoinMagnet coin)
+    {
+        coin.gameObject.SetActive(true);
+    }
+
+    private void OnCoinDePooled(CoinMagnet coin)
+    {
+        coin.gameObject.SetActive(false);
+    }
+
+    private void OnCoinDestroyed(CoinMagnet coin)
+    {
+        Destroy(coin.gameObject);
+    }
+
+    private ParticlePool CreateBulletParticle()
+    {
+        ParticlePool bulletParticle = Instantiate(this.bulletParticle).GetComponent<ParticlePool>();
+        bulletParticle.gameObject.SetActive(false);
+        bulletParticle.SetPool(bulletParticlePool);
+        return bulletParticle;
+    }
+
+    private void OnBulletParticlePooled(ParticlePool bulletParticle)
+    {
+        bulletParticle.gameObject.SetActive(true);
+    }
+
+    private void OnBulletParticleDePooled(ParticlePool bulletParticle)
+    {
+        bulletParticle.gameObject.SetActive(false);
+    }
+
+    private void OnBulletParticleDestroyed(ParticlePool bulletParticle)
+    {
+        Destroy(bulletParticle.gameObject);
+    }
+
+    private ParticlePool CreateMissileParticle()
+    {
+        ParticlePool missileParticle = Instantiate(this.missileParticle).GetComponent<ParticlePool>();
+        missileParticle.gameObject.SetActive(false);
+        missileParticle.SetPool(missileParticlePool);
+        return missileParticle;
+    }
+
+    private void OnMissileParticlePooled(ParticlePool missileParticle)
+    {
+        missileParticle.gameObject.SetActive(true);
+    }
+
+    private void OnMissileParticleDePooled(ParticlePool missileParticle)
+    {
+        missileParticle.gameObject.SetActive(false);
+    }
+
+    private void OnMissileParticleDestroyed(ParticlePool missileParticle)
+    {
+        Destroy(missileParticle.gameObject);
+    }
+
+    public EnemyController GetEnemy()
+    {
+        return enemyPool.Get();
+    }
+
+    public Projectile GetBullet()
+    {
+        return bulletPool.Get();
+    }
+
+    public Projectile GetMissile()
+    {
+        return missilePool.Get();
+    }
+
+    public CoinMagnet GetCoin()
+    {
+        return coinPool.Get();
+    }
+
+    public ParticlePool GetBulletParticle()
+    {
+        return bulletParticlePool.Get();
+    }
+
+    public ParticlePool GetMissileParticle()
+    {
+        return missileParticlePool.Get();
+    }
+
+    public ParticlePool GetParticle(Weapon.WeaponType weaponType)
+    {
+        switch (weaponType)
         {
-            GameObject obj = Instantiate(prefab, transform);
-            obj.SetActive(false);
-            pool.Enqueue(obj);
+            case Weapon.WeaponType.Single:
+                return GetBulletParticle();
+            case Weapon.WeaponType.Spread:
+                return GetMissileParticle();
+            default:
+                return GetBulletParticle();
         }
-
-        return pool;
-    }
-
-    private GameObject GetObjectFromPool(Queue<GameObject> pool)
-    {
-        if (pool.Count > 0)
-        {
-            GameObject obj = pool.Dequeue();
-            obj.SetActive(true);
-            return obj;
-        }
-
-        // return ExpandPool(pool);
-        return null;
-    }
-
-    private GameObject ExpandPool(Queue<GameObject> pool)
-    {
-        if (poolPrefabMap.TryGetValue(pool, out GameObject prefab))
-        {
-            GameObject newObj = Instantiate(prefab, transform);
-            newObj.SetActive(true);
-            pool.Enqueue(newObj);
-            return newObj;
-        }
-
-        return null;
-    }
-
-    public GameObject GetBulletObjectFromPool()
-    {
-        return GetObjectFromPool(bulletPool);
-    }
-
-    public GameObject GetMissileObjectFromPool()
-    {
-        return GetObjectFromPool(missilePool);
-    }
-
-    public GameObject GetCoinObjectFromPool()
-    {
-        Debug.Log("Getting coin from pool");
-        return GetObjectFromPool(coinPool);
-    }
-
-    public void ReturnObjectToPool(GameObject obj)
-    {
-        obj.SetActive(false);
-        bulletPool.Enqueue(obj);
-        missilePool.Enqueue(obj);
-        coinPool.Enqueue(obj);
-    }
-
-    public void ReturnAllObjectsToPool()
-    {
-        ReturnObjectsToPool(bulletPool);
-        ReturnObjectsToPool(missilePool);
-        ReturnObjectsToPool(coinPool);
-    }
-
-    private void ReturnObjectsToPool(Queue<GameObject> pool)
-    {
-        while (pool.Count > 0)
-        {
-            GameObject obj = pool.Dequeue();
-            obj.SetActive(false);
-        }
-    }
-
-    public void Update()
-    {
-        Debug.Log("Bullet pool size: " + bulletPool.Count);
-        Debug.Log("Missile pool size: " + missilePool.Count);
-        Debug.Log("Coin pool size: " + coinPool.Count);
     }
 }

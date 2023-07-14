@@ -64,7 +64,7 @@ public class PlayerController : MonoBehaviour
         controller.Move(playerVelocity * Time.deltaTime);
 
         // Set Player Rotation to Face Target
-        if (target)
+        if (target && target.gameObject.activeSelf)
         {
             Vector3 targetDirection = target.position - transform.position;
             Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, playerSpeed * Time.deltaTime, 0.0f);

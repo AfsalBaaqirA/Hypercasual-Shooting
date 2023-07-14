@@ -7,6 +7,7 @@ public class Weapon : ScriptableObject
     [SerializeField] private float fireRate;
     [SerializeField] private int damage;
     [SerializeField] private float shootingRange;
+    [SerializeField] private float projectileSpeed;
     [SerializeField] private AudioClip fireSound;
     [SerializeField] private WeaponType weaponFireType;
 
@@ -14,6 +15,7 @@ public class Weapon : ScriptableObject
     public float FireRate => fireRate;
     public int Damage => damage;
     public float ShootingRange => shootingRange;
+    public float ProjectileSpeed => projectileSpeed;
     public AudioClip FireSound => fireSound;
     public WeaponType WeaponFireType => weaponFireType;
 

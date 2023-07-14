@@ -6,7 +6,6 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private List<GameObject> weapons;
     [SerializeField] private PlayerController player;
     [SerializeField] private Transform firePoint;
-    [SerializeField] private float bulletForce = 20f;
     [SerializeField] private ParticleSystem muzzleFlash;
     [SerializeField] private ParticleSystem catridgeEjection;
 
@@ -93,17 +92,17 @@ public class WeaponController : MonoBehaviour
             return;
 
         // Perform shooting-related actions (e.g., play shooting animation, spawn particles, etc.)
-        GameObject bulletObject = null;
+        Projectile bulletObject = null;
 
         switch (weaponName)
         {
             case "Pistol":
             case "Shotgun":
             case "Machinegun":
-                bulletObject = objectPooler.GetBulletObjectFromPool();
+                bulletObject = objectPooler.GetBullet();
                 break;
             case "Launcher":
-                bulletObject = objectPooler.GetMissileObjectFromPool();
+                bulletObject = objectPooler.GetMissile();
                 break;
         }
 
@@ -111,16 +110,12 @@ public class WeaponController : MonoBehaviour
         Vector3 direction = (target.position - firePoint.position).normalized;
         Quaternion rotation = Quaternion.LookRotation(direction);
         bulletObject.transform.rotation = rotation;
-        Debug.DrawRay(firePoint.position, direction * 100f, Color.red, 2f);
-
-        Debug.Log("Bullet" + bulletObject.name + " - " + bulletObject.GetComponent<ProjectileController>().Weapon);
-        bulletObject.GetComponent<ProjectileController>().Weapon = currentWeapon;
-        bulletObject.SetActive(true);
+        bulletObject.Weapon = currentWeapon;
 
         Rigidbody bulletRigidbody = bulletObject.GetComponent<Rigidbody>();
         if (bulletRigidbody != null)
         {
-            bulletRigidbody.AddForce(firePoint.transform.forward * bulletForce, ForceMode.Impulse);
+            bulletRigidbody.velocity = direction * currentWeapon.ProjectileSpeed;
         }
 
         AudioManager.Instance.PlaySoundEffect(currentWeapon.FireSound);

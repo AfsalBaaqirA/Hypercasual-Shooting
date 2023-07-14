@@ -16,5 +16,6 @@ MonoBehaviour:
   fireRate: 0.4
   damage: 15
   shootingRange: 15
+  projectileSpeed: 100
   fireSound: {fileID: 8300000, guid: d1c5916a97315374db8df0cdfa527463, type: 3}
   weaponFireType: 0
