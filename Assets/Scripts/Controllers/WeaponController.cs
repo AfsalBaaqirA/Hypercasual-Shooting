@@ -11,17 +11,15 @@ public class WeaponController : MonoBehaviour
 
     private Weapon currentWeapon;
     private Animator animator;
-
-    public Weapon CurrentWeapon => currentWeapon;
-
     private Transform target;
     private float shootingRange;
     private float nextFireTime = 0f;
     private float fireRate;
     private string weaponName;
-    private GameObject[] enemies;
     private ObjectPooler objectPooler;
+    private GameObject[] enemies;
 
+    public Weapon CurrentWeapon => currentWeapon;
 
     private void Awake()
     {
@@ -39,10 +37,8 @@ public class WeaponController : MonoBehaviour
         if (currentWeapon == null || !GameManager.Instance.IsGameInProgress())
             return;
 
-        // Find the nearest enemy within the targeting range
         FindNearestEnemy();
 
-        // Check if a target is found and if enough time has passed to fire
         if (target != null && Vector3.Distance(transform.position, target.position) <= shootingRange)
         {
             Shoot();
@@ -70,7 +66,6 @@ public class WeaponController : MonoBehaviour
 
         if (target != null && target != closestEnemy)
         {
-            // Hide the target indicator of the previous target
             target.GetComponent<EnemyController>().HideTargetIndicator();
         }
 
@@ -79,16 +74,13 @@ public class WeaponController : MonoBehaviour
         if (target == null)
             return;
 
-        // Check if the target is within the targeting range
         if (Vector3.Distance(transform.position, target.position) <= shootingRange)
         {
-            // Display the target indicator
             player.Target = target;
             target.GetComponent<EnemyController>().ShowTargetIndicator();
         }
         else
         {
-            // Hide the target indicator
             player.Target = null;
             target.GetComponent<EnemyController>().HideTargetIndicator();
         }
@@ -96,11 +88,9 @@ public class WeaponController : MonoBehaviour
 
     private void Shoot()
     {
-        // Check if enough time has passed to fire
         if (Time.time < nextFireTime)
             return;
 
-        // Perform shooting-related actions (e.g., play shooting animation, spawn particles, etc.)
         Projectile bulletObject = null;
 
         Vector3 direction = (target.position - firePoint.position).normalized;
@@ -129,22 +119,14 @@ public class WeaponController : MonoBehaviour
         muzzleFlash.Play();
         catridgeEjection.Play();
 
-        // Update the next fire time
         nextFireTime = Time.time + fireRate;
     }
 
     public void EquipWeapon(Weapon weapon)
     {
-        // Set the current weapon
         currentWeapon = weapon;
-
-        // Set the fire rate
         fireRate = currentWeapon.FireRate;
-
-        // Set the shooting range
         shootingRange = currentWeapon.ShootingRange;
-
-        // Set the weapon name
         weaponName = currentWeapon.WeaponName;
 
         foreach (GameObject wp in weapons)
@@ -152,21 +134,7 @@ public class WeaponController : MonoBehaviour
             wp.SetActive(wp.name == weaponName);
         }
 
-        switch (weaponName)
-        {
-            case "Pistol":
-                animator.Play("Anim-Pistol");
-                break;
-            case "Shotgun":
-                animator.Play("Anim-Shotgun");
-                break;
-            case "Machinegun":
-                animator.Play("Anim-Machinegun");
-                break;
-            case "Launcher":
-                animator.Play("Anim-Launcher");
-                break;
-        }
+        animator.Play("Anim-" + weaponName);
 
         GameManager.Instance.WeaponName = weaponName;
 
