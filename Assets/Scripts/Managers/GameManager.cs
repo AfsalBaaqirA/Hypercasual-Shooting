@@ -49,6 +49,14 @@ public class GameManager : MonoBehaviour
         AudioManager.Instance.PlayMusic(musicClip);
     }
 
+    private void Update()
+    {
+        if (GameState == GameState.Started && PlayerController.Instance.transform.position.y < killPlaneY)
+        {
+            GameOver();
+        }
+    }
+
     public void GameOver()
     {
         GameState = GameState.Over;

@@ -24,7 +24,7 @@ public class EnemyController : MonoBehaviour
 
     private void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        player = PlayerController.Instance.transform;
     }
 
     private void OnEnable()
@@ -75,7 +75,6 @@ public class EnemyController : MonoBehaviour
         if (isDead)
             return;
         CancelInvoke("HideHealthBar");
-        Debug.Log("Enemy taking damage" + this.name);
         currentHealth -= damage;
         this.healthBar.SetActive(true);
         this.healthBar.GetComponent<HealthBar>().SetHealth(currentHealth);
@@ -96,6 +95,7 @@ public class EnemyController : MonoBehaviour
     private void Die()
     {
         SpawnCoin();
+        AdsManager.Instance.EnemyKillCount++;
         _enemyPool.Release(this);
     }
 
@@ -111,7 +111,6 @@ public class EnemyController : MonoBehaviour
 
     private void SpawnCoin()
     {
-        CoinMagnet coin = ObjectPooler.Instance.GetCoin();
-        coin.transform.position = this.transform.position + new Vector3(0, 1, 0);
+        CoinMagnet coin = ObjectPooler.Instance.GetCoin(transform.position + new Vector3(0, 1, 0));
     }
 }

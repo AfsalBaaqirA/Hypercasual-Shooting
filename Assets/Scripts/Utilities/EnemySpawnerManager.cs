@@ -7,8 +7,6 @@ public class EnemySpawnerManager : MonoBehaviour
     [SerializeField] private Collider initialSpawnAreaCollider;
     [SerializeField] private int spawnEnemiesCount = 3;
 
-    private int spawnIndex = 0;
-
     private void Awake()
     {
         Instance = this;
@@ -24,14 +22,14 @@ public class EnemySpawnerManager : MonoBehaviour
         if (spawnAreaCollider == null)
             return;
 
+        Debug.Log("Spawning " + count + " enemies");
+
         for (int i = 0; i < count; i++)
         {
             Vector3 spawnPosition = GetRandomPositionInCollider(spawnAreaCollider);
 
-            EnemyController enemy = ObjectPooler.Instance.GetEnemy();
-            enemy.transform.position = spawnPosition;
+            EnemyController enemy = ObjectPooler.Instance.GetEnemy(spawnPosition);
         }
-        spawnIndex++;
     }
 
     private Vector3 GetRandomPositionInCollider(Collider collider)

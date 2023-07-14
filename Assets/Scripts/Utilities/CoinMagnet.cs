@@ -10,7 +10,7 @@ public class CoinMagnet : MonoBehaviour
 
     private void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        player = PlayerController.Instance.transform;
     }
 
     public void SetPool(ObjectPool<CoinMagnet> pool)

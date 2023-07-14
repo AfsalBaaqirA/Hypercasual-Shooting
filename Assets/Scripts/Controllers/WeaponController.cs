@@ -11,6 +11,8 @@ public class WeaponController : MonoBehaviour
 
     private Weapon currentWeapon;
 
+    public Weapon CurrentWeapon => currentWeapon;
+
     private Transform target;
     private float shootingRange;
     private float nextFireTime = 0f;
@@ -94,22 +96,20 @@ public class WeaponController : MonoBehaviour
         // Perform shooting-related actions (e.g., play shooting animation, spawn particles, etc.)
         Projectile bulletObject = null;
 
+        Vector3 direction = (target.position - firePoint.position).normalized;
+        Quaternion rotation = Quaternion.LookRotation(direction);
         switch (weaponName)
         {
             case "Pistol":
             case "Shotgun":
             case "Machinegun":
-                bulletObject = objectPooler.GetBullet();
+                bulletObject = objectPooler.GetBullet(firePoint.position, rotation);
                 break;
             case "Launcher":
-                bulletObject = objectPooler.GetMissile();
+                bulletObject = objectPooler.GetMissile(firePoint.position, rotation);
                 break;
         }
 
-        bulletObject.transform.position = firePoint.position;
-        Vector3 direction = (target.position - firePoint.position).normalized;
-        Quaternion rotation = Quaternion.LookRotation(direction);
-        bulletObject.transform.rotation = rotation;
         bulletObject.Weapon = currentWeapon;
 
         Rigidbody bulletRigidbody = bulletObject.GetComponent<Rigidbody>();
@@ -146,6 +146,11 @@ public class WeaponController : MonoBehaviour
         }
 
         GameManager.Instance.WeaponName = weaponName;
+
+        if (currentWeapon.WeaponName == AdsManager.Instance.PickedUpMorePowerfulWeapon)
+        {
+            AdsManager.Instance.CaptureScreenshot();
+        }
     }
 
     public void HideAllWeapons()

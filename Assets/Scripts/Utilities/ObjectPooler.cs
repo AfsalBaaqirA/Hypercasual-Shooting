@@ -38,6 +38,23 @@ public class ObjectPooler : MonoBehaviour
         coinPool = new ObjectPool<CoinMagnet>(CreateCoin, OnCoinPooled, OnCoinDePooled, OnCoinDestroyed, collectionCheck, initialPoolSize, maxPoolSize);
         bulletParticlePool = new ObjectPool<ParticlePool>(CreateBulletParticle, OnBulletParticlePooled, OnBulletParticleDePooled, OnBulletParticleDestroyed, collectionCheck, initialPoolSize, maxPoolSize);
         missileParticlePool = new ObjectPool<ParticlePool>(CreateMissileParticle, OnMissileParticlePooled, OnMissileParticleDePooled, OnMissileParticleDestroyed, collectionCheck, initialPoolSize, maxPoolSize);
+
+        // Preload the pools with the initial pool size amount and disable the objects
+        for (int i = 0; i < initialPoolSize; i++)
+        {
+            EnemyController enemy = CreateEnemy();
+            enemyPool.Release(enemy);
+            Projectile bullet = CreateBullet();
+            bulletPool.Release(bullet);
+            Projectile missile = CreateMissile();
+            missilePool.Release(missile);
+            CoinMagnet coin = CreateCoin();
+            coinPool.Release(coin);
+            ParticlePool bulletParticle = CreateBulletParticle();
+            bulletParticlePool.Release(bulletParticle);
+            ParticlePool missileParticle = CreateMissileParticle();
+            missileParticlePool.Release(missileParticle);
+        }
     }
 
     private EnemyController CreateEnemy()
@@ -178,46 +195,62 @@ public class ObjectPooler : MonoBehaviour
         Destroy(missileParticle.gameObject);
     }
 
-    public EnemyController GetEnemy()
+    public EnemyController GetEnemy(Vector3 position)
     {
-        return enemyPool.Get();
+        EnemyController enemy = enemyPool.Get();
+        enemy.transform.position = position;
+        return enemy;
     }
 
-    public Projectile GetBullet()
+    public Projectile GetBullet(Vector3 position, Quaternion rotation)
     {
-        return bulletPool.Get();
+        Projectile bullet = bulletPool.Get();
+        bullet.transform.position = position;
+        bullet.transform.rotation = rotation;
+        return bullet;
     }
 
-    public Projectile GetMissile()
+    public Projectile GetMissile(Vector3 position, Quaternion rotation)
     {
-        return missilePool.Get();
+        Projectile missile = missilePool.Get();
+        missile.transform.position = position;
+        missile.transform.rotation = rotation;
+        return missile;
     }
 
-    public CoinMagnet GetCoin()
+    public CoinMagnet GetCoin(Vector3 position)
     {
-        return coinPool.Get();
+        CoinMagnet coin = coinPool.Get();
+        coin.transform.position = position;
+        return coin;
     }
 
-    public ParticlePool GetBulletParticle()
+    public ParticlePool GetBulletParticle(Vector3 position, Quaternion rotation)
     {
-        return bulletParticlePool.Get();
+        ParticlePool bulletParticle = bulletParticlePool.Get();
+        bulletParticle.transform.position = position;
+        bulletParticle.transform.rotation = rotation;
+        return bulletParticle;
     }
 
-    public ParticlePool GetMissileParticle()
+    public ParticlePool GetMissileParticle(Vector3 position, Quaternion rotation)
     {
-        return missileParticlePool.Get();
+        ParticlePool missileParticle = missileParticlePool.Get();
+        missileParticle.transform.position = position;
+        missileParticle.transform.rotation = rotation;
+        return missileParticle;
     }
 
-    public ParticlePool GetParticle(Weapon.WeaponType weaponType)
+    public ParticlePool GetParticle(Weapon.WeaponType weaponType, Vector3 position, Quaternion rotation)
     {
         switch (weaponType)
         {
             case Weapon.WeaponType.Single:
-                return GetBulletParticle();
+                return GetBulletParticle(position, rotation);
             case Weapon.WeaponType.Spread:
-                return GetMissileParticle();
+                return GetMissileParticle(position, rotation);
             default:
-                return GetBulletParticle();
+                return GetBulletParticle(position, rotation);
         }
     }
 }

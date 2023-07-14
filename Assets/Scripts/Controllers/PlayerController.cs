@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public static PlayerController Instance;
     private PlayerInputAction playerInput;
 
     private CharacterController controller;
@@ -29,6 +31,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
         playerInput = new PlayerInputAction();
         controller = GetComponent<CharacterController>();
         rb = GetComponentInChildren<Rigidbody>();
@@ -79,13 +82,6 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-
-        // Check if the player y position is below the kill plane
-        if (transform.position.y < GameManager.Instance.KillPlaneY)
-        {
-            GameManager.Instance.GameOver();
-        }
-
         HandleAnimation(move.magnitude);
     }
 
@@ -103,14 +99,54 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // Check if the colliding object is an enemy
+        EnemyController enemy = other.GetComponent<EnemyController>();
+        if (enemy != null)
+        {
+            // Increase the count of colliding enemies
+            int collidingEnemyCount = CountCollidingEnemies();
+
+            // Check the number of colliding enemies and trigger AdsManager capture
+            if (collidingEnemyCount > AdsManager.Instance.CaptureThreshold)
+            {
+                AdsManager.Instance.TriggerEnemyOnPlayerDeath();
+            }
+        }
+
         if (!GameManager.Instance.IsGameInProgress())
             return;
+
         // Check if the player has collided with an enemy
         if (other.CompareTag("Enemy"))
         {
             GameManager.Instance.GameOver();
         }
     }
+
+    private int CountCollidingEnemies()
+    {
+        int count = 0;
+        Collider playerCollider = GetComponent<Collider>();
+        HashSet<EnemyController> uniqueEnemies = new HashSet<EnemyController>();
+
+        // Get all the colliders overlapping with the player collider
+        Collider[] colliders = Physics.OverlapBox(playerCollider.bounds.center, Vector3.one * 10f, playerCollider.transform.rotation);
+
+        // Check if each overlapping collider belongs to an enemy
+        foreach (Collider collider in colliders)
+        {
+            EnemyController enemy = collider.GetComponent<EnemyController>();
+            if (enemy != null && !uniqueEnemies.Contains(enemy))
+            {
+                uniqueEnemies.Add(enemy);
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+
 
     public void CollectCoin()
     {

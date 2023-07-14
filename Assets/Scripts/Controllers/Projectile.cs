@@ -50,9 +50,7 @@ public class Projectile : MonoBehaviour
                     break;
             }
 
-            ParticlePool particleEffect = ObjectPooler.Instance.GetParticle(_weapon.WeaponFireType);
-            particleEffect.transform.position = transform.position + Vector3.up * 0.5f;
-            particleEffect.transform.rotation = transform.rotation;
+            ParticlePool particleEffect = ObjectPooler.Instance.GetParticle(_weapon.WeaponFireType, transform.position, transform.rotation);
             particleEffect.transform.localScale = Vector3.one + Vector3.one * _weapon.Damage * 0.1f;
 
             DisableProjectile();
