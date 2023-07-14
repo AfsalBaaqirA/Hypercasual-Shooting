@@ -8,10 +8,12 @@ public class PickableWeapon : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // Add the weapon to the player's inventory
-            other.GetComponent<WeaponController>().EquipWeapon(weapon);
+            WeaponController weaponController = other.GetComponent<WeaponController>();
+            if (weaponController != null)
+            {
+                weaponController.EquipWeapon(weapon);
+            }
 
-            // Destroy the weapon in the scene
             Destroy(gameObject);
         }
     }

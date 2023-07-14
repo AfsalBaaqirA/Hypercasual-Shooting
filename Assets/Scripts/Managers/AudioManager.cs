@@ -4,17 +4,17 @@ using UnityEngine.Audio;
 public class AudioManager : MonoBehaviour
 {
     private static AudioManager instance;
+
     [SerializeField] private AudioMixerGroup musicMixerGroup;
     [SerializeField] private AudioMixerGroup soundEffectsMixerGroup;
 
     private const string MUSIC_VOLUME_KEY = "MusicVolume";
     private const string SOUND_EFFECTS_VOLUME_KEY = "SoundEffectsVolume";
-    private const float DEFAULT_MUSIC_VOLUME = 0.5f;
-    private const float DEFAULT_SOUND_EFFECTS_VOLUME = 0.5f;
+    private const float DEFAULT_VOLUME = 0.5f;
 
     private AudioSource musicPlayer;
     private AudioSource soundEffectsPlayer;
-    public AudioMixer audioMixer;
+    private AudioMixer audioMixer;
 
     public static AudioManager Instance => instance;
 
@@ -27,13 +27,14 @@ public class AudioManager : MonoBehaviour
         }
 
         instance = this;
-        DontDestroyOnLoad(this.gameObject);
 
         musicPlayer = gameObject.AddComponent<AudioSource>();
         soundEffectsPlayer = gameObject.AddComponent<AudioSource>();
 
         musicPlayer.outputAudioMixerGroup = musicMixerGroup;
         soundEffectsPlayer.outputAudioMixerGroup = soundEffectsMixerGroup;
+
+        audioMixer = musicMixerGroup.audioMixer;
     }
 
     private void Start()
@@ -46,17 +47,29 @@ public class AudioManager : MonoBehaviour
     {
         musicPlayer.mute = ClientPrefs.GetMusicToggle();
         soundEffectsPlayer.mute = ClientPrefs.GetSoundEffectsToggle();
-        SetMusicVolume(DEFAULT_MUSIC_VOLUME);
-        SetSoundEffectsVolume(DEFAULT_SOUND_EFFECTS_VOLUME);
+        SetVolume(MUSIC_VOLUME_KEY, DEFAULT_VOLUME);
+        SetVolume(SOUND_EFFECTS_VOLUME_KEY, DEFAULT_VOLUME);
+    }
+
+    private void SetVolume(string volumeKey, float volume)
+    {
+        volume = Mathf.Clamp01(volume);
+        audioMixer.SetFloat(volumeKey, ConvertToDecibel(volume));
+    }
+
+    private float GetVolume(string volumeKey)
+    {
+        float volume;
+        audioMixer.GetFloat(volumeKey, out volume);
+        return Mathf.Pow(10f, volume / 20f);
     }
 
     public void PlayMusic(AudioClip musicClip)
     {
-        if (musicPlayer.isPlaying)
-            StopMusic();
+        StopMusic();
 
         musicPlayer.clip = musicClip;
-        musicPlayer.volume = GetMusicVolume();
+        musicPlayer.volume = GetVolume(MUSIC_VOLUME_KEY);
         musicPlayer.loop = true;
         musicPlayer.Play();
     }
@@ -71,24 +84,18 @@ public class AudioManager : MonoBehaviour
         if (soundEffectClip == null)
             return;
 
-        if (soundEffectsPlayer.isPlaying)
-            soundEffectsPlayer.Stop();
-
-        soundEffectsPlayer.PlayOneShot(soundEffectClip, GetSoundEffectsVolume());
+        soundEffectsPlayer.PlayOneShot(soundEffectClip, GetVolume(SOUND_EFFECTS_VOLUME_KEY));
     }
 
     public void SetMusicVolume(float volume)
     {
-        volume = Mathf.Clamp01(volume);
+        SetVolume(MUSIC_VOLUME_KEY, volume);
         musicPlayer.volume = volume;
-        audioMixer.SetFloat(MUSIC_VOLUME_KEY, ConvertToDecibel(volume));
     }
 
     public float GetMusicVolume()
     {
-        float volume;
-        audioMixer.GetFloat(MUSIC_VOLUME_KEY, out volume);
-        return Mathf.Pow(10f, volume / 20f);
+        return GetVolume(MUSIC_VOLUME_KEY);
     }
 
     public void ToggleMusicMute(bool isMuted)
@@ -104,15 +111,12 @@ public class AudioManager : MonoBehaviour
 
     public void SetSoundEffectsVolume(float volume)
     {
-        volume = Mathf.Clamp01(volume);
-        audioMixer.SetFloat(SOUND_EFFECTS_VOLUME_KEY, ConvertToDecibel(volume));
+        SetVolume(SOUND_EFFECTS_VOLUME_KEY, volume);
     }
 
     public float GetSoundEffectsVolume()
     {
-        float volume;
-        audioMixer.GetFloat(SOUND_EFFECTS_VOLUME_KEY, out volume);
-        return Mathf.Pow(10f, volume / 20f);
+        return GetVolume(SOUND_EFFECTS_VOLUME_KEY);
     }
 
     public void ToggleSoundEffectsMute(bool isMuted)

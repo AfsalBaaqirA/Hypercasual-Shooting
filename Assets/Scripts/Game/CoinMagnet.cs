@@ -21,16 +21,25 @@ public class CoinMagnet : MonoBehaviour
     private void Update()
     {
         if (!GameManager.Instance.IsGameInProgress())
+        {
             return;
+        }
 
         if (player != null)
         {
-            // Move towards the player in collectible effect mode
-            transform.position = Vector3.MoveTowards(transform.position, player.position, moveSpeed * Time.deltaTime);
-            // Rotate the coin in collectible effect mode
-            transform.Rotate(Vector3.up * 100f * Time.deltaTime);
-
+            MoveTowardsPlayer();
+            RotateCoin();
         }
+    }
+
+    private void MoveTowardsPlayer()
+    {
+        transform.position = Vector3.MoveTowards(transform.position, player.position, moveSpeed * Time.deltaTime);
+    }
+
+    private void RotateCoin()
+    {
+        transform.Rotate(Vector3.up * 100f * Time.deltaTime);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -43,9 +52,9 @@ public class CoinMagnet : MonoBehaviour
 
     private void CollectCoin()
     {
-        player.GetComponent<PlayerController>().CollectCoin();
+        PlayerController playerController = player.GetComponent<PlayerController>();
+        playerController.CollectCoin();
 
-        // Disable the coin
         coinPool.Release(this);
     }
 }

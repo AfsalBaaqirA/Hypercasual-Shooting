@@ -7,18 +7,25 @@ public class UIWobbleEffect : MonoBehaviour
 
     private RectTransform rectTransform;
     private Vector3 initialScale;
+    private float timeOffset;
 
-    private void Start()
+    private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
         initialScale = rectTransform.localScale;
+        timeOffset = Random.Range(0f, 2f * Mathf.PI);
     }
 
     private void Update()
     {
-        // Apply wobble effect to the scale
-        float scaleAmount = Mathf.Sin(Time.time * wobbleSpeed) * wobbleIntensity;
-        Vector3 newScale = initialScale + new Vector3(scaleAmount, scaleAmount, 0f);
+        ApplyWobbleEffect();
+    }
+
+    private void ApplyWobbleEffect()
+    {
+        float time = Time.time + timeOffset;
+        float wobble = Mathf.Sin(time * wobbleSpeed) * wobbleIntensity;
+        Vector3 newScale = initialScale + new Vector3(wobble, wobble, 0f);
         rectTransform.localScale = newScale;
     }
 }

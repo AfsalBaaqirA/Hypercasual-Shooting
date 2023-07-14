@@ -147,7 +147,7 @@ public class WeaponController : MonoBehaviour
 
         GameManager.Instance.WeaponName = weaponName;
 
-        if (currentWeapon.WeaponName == AdsManager.Instance.PickedUpMorePowerfulWeapon)
+        if (currentWeapon.WeaponName == AdsManager.Instance.MorePowerfulWeapon)
         {
             AdsManager.Instance.CaptureScreenshot();
         }

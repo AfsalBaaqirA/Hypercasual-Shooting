@@ -3,7 +3,7 @@ using UnityEngine;
 public class EnemySpawnerManager : MonoBehaviour
 {
     public static EnemySpawnerManager Instance;
-    [SerializeField] private GameObject enemyPrefab;
+
     [SerializeField] private Collider initialSpawnAreaCollider;
     [SerializeField] private int spawnEnemiesCount = 3;
 
@@ -19,16 +19,15 @@ public class EnemySpawnerManager : MonoBehaviour
 
     public void SpawnEnemies(int count, Collider spawnAreaCollider)
     {
-        if (spawnAreaCollider == null)
+        if (spawnAreaCollider == null || count <= 0)
+        {
             return;
-
-        Debug.Log("Spawning " + count + " enemies");
+        }
 
         for (int i = 0; i < count; i++)
         {
             Vector3 spawnPosition = GetRandomPositionInCollider(spawnAreaCollider);
-
-            EnemyController enemy = ObjectPooler.Instance.GetEnemy(spawnPosition);
+            SpawnEnemy(spawnPosition);
         }
     }
 
@@ -40,5 +39,10 @@ public class EnemySpawnerManager : MonoBehaviour
             Random.Range(collider.bounds.min.z, collider.bounds.max.z)
         );
         return randomPosition;
+    }
+
+    private void SpawnEnemy(Vector3 spawnPosition)
+    {
+        EnemyController enemy = ObjectPooler.Instance.GetEnemy(spawnPosition);
     }
 }
